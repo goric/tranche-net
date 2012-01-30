@@ -1,0 +1,5 @@
+C:\Documents and Settings\Tim\my documents\visual studio 2010\Projects\Tranche\ILGen\bin\Debug\ILGen.dll
+C:\Documents and Settings\Tim\my documents\visual studio 2010\Projects\Tranche\ILGen\bin\Debug\ILGen.pdb
+C:\Documents and Settings\Tim\my documents\visual studio 2010\Projects\Tranche\ILGen\obj\Debug\ResolveAssemblyReference.cache
+C:\Documents and Settings\Tim\my documents\visual studio 2010\Projects\Tranche\ILGen\obj\Debug\ILGen.dll
+C:\Documents and Settings\Tim\my documents\visual studio 2010\Projects\Tranche\ILGen\obj\Debug\ILGen.pdb

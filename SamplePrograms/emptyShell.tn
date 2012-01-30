@@ -1,0 +1,94 @@
+Settings
+{
+	/* 
+		This section is for configuration-type settings. 
+		Define properties such as file connections, global variables, 
+		etc. to be used in the rules sections.
+
+		Optional.
+	*/
+}
+
+Deal
+{
+	/* 
+		Mostly a place holder for identifying information about this file/simulation.
+
+		Optional.
+	*/
+}
+
+
+Collateral
+{
+	/*
+		Holds collateral information for this simulation. 
+
+		Required.
+	*/
+
+	CollateralItem
+	{
+		/*
+			Data for a specific item in the collateral pool of the deal.
+
+			Optional.
+		*/
+	}
+	CollateralItem
+	{
+		
+	}
+}
+
+
+Securities
+{
+	/*
+		Holds information on the securities paid by this deal.
+
+		Required.
+	*/
+	Bond
+	{
+		/*
+			Data for a specific bond paid by the deal.
+
+			Optional.
+		*/
+	}
+	Bond
+	{
+	}
+}
+
+
+CreditPaymentRules
+{
+	/*
+		Rules governing how the credits (bonds) are allocated payments from the collateral. 
+		Can be split into interest and principal sections.
+
+		Required.
+	*/
+}
+
+
+Simulation
+{
+	/*
+		Section to hold the information for this simulation. Saving results, rules to apply, etc.
+
+		Required.
+	*/
+
+	Rules
+	{
+		/*
+			Rules for how the collateral should be simulated in this run. Based on randomness
+			or properties in the collateral.
+
+			Required.
+		*/
+	} 
+}

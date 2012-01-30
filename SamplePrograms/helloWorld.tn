@@ -1,0 +1,10 @@
+Collateral {}
+Securities {}
+CreditPaymentRules {}
+Simulation
+{
+	Rules
+	{
+		print("Hello, world!")
+	} 
+}

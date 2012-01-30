@@ -1,6 +1,0 @@
-C:\Documents and Settings\Tim\my documents\visual studio 2010\Projects\Tranche\AbstractSyntaxTree\bin\Debug\AbstractSyntaxTree.dll
-C:\Documents and Settings\Tim\my documents\visual studio 2010\Projects\Tranche\AbstractSyntaxTree\bin\Debug\AbstractSyntaxTree.pdb
-C:\Documents and Settings\Tim\my documents\visual studio 2010\Projects\Tranche\AbstractSyntaxTree\bin\Debug\QUT.ShiftReduceParser.dll
-C:\Documents and Settings\Tim\my documents\visual studio 2010\Projects\Tranche\AbstractSyntaxTree\obj\Debug\ResolveAssemblyReference.cache
-C:\Documents and Settings\Tim\my documents\visual studio 2010\Projects\Tranche\AbstractSyntaxTree\obj\Debug\AbstractSyntaxTree.dll
-C:\Documents and Settings\Tim\my documents\visual studio 2010\Projects\Tranche\AbstractSyntaxTree\obj\Debug\AbstractSyntaxTree.pdb

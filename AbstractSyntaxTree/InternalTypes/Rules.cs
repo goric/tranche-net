@@ -7,9 +7,9 @@ namespace AbstractSyntaxTree.InternalTypes
 {
     public class Rules : StatementList
     {
-        public StatementList Statements { get; set; }
+        public InternalRuleList Statements { get; set; }
 
-        public Rules (StatementList items)
+        public Rules (InternalRuleList items)
         {
             Statements = items;
         }

@@ -18,6 +18,15 @@ namespace AbstractSyntaxTree
         public virtual void VisitStringLiteral (StringLiteral n) { }
         public virtual void VisitIntegerLiteral (IntegerLiteral n) { }
         public virtual void VisitRealLiteral (RealLiteral n) { }
+        public virtual void VisitBooleanLiteral (BooleanLiteral n) { }
+        public virtual void VisitIdentifier (Identifier n) { }
+        public virtual void VisitBinaryExpression (BinaryExpression n) { }
+        public virtual void VisitEqual (Equal n) { }
+        public virtual void VisitNotEqual (NotEqual n) { }
+        public virtual void VisitSmallerEqual (SmallerEqual n) { }
+        public virtual void VisitGreaterEqual (GreaterEqual n) { }
+        public virtual void VisitGreater (Greater n) { }
+        public virtual void VisitSmaller (Smaller n) { }
         public virtual void VisitExprList (ExpressionList n)
         {
             if (!n.IsEmpty)
@@ -28,6 +37,10 @@ namespace AbstractSyntaxTree
         }
 
         #endregion
+
+        public virtual void VisitInternalRuleList (InternalTypes.InternalRuleList n) { }
+        public virtual void VisitInternalRuleListOr (InternalTypes.InternalRuleListOr n) { }
+        public virtual void VisitInternalRuleListAnd (InternalTypes.InternalRuleListAnd n) { }
 
         #region Statements
 
@@ -57,6 +70,8 @@ namespace AbstractSyntaxTree
         public virtual void VisitSettings (InternalTypes.Settings n) { }
         public virtual void VisitSecurities (InternalTypes.Securities n) { }
         public virtual void VisitCreditPaymentRules (InternalTypes.CreditPaymentRules n) { }
+        public virtual void VisitInterestRules (InternalTypes.InterestRules n) { }
+        public virtual void VisitPrincipalRules (InternalTypes.PrincipalRules n) { }
         public virtual void VisitSimulation (InternalTypes.Simulation n) { }
         public virtual void VisitRules (InternalTypes.Rules n) { }
         public virtual void VisitCollateralItem (InternalTypes.CollateralItem n) { }

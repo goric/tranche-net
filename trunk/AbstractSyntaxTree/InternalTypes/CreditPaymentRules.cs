@@ -7,12 +7,14 @@ namespace AbstractSyntaxTree.InternalTypes
 {
     public class CreditPaymentRules : Statement
     {
-        public StatementList Statements { get; set; }
+        public InterestRules Interest { get; set; }
+        public PrincipalRules Principal { get; set; }
 
         public CreditPaymentRules () { }
-        public CreditPaymentRules (StatementList stmt)
+        public CreditPaymentRules (InterestRules interest, PrincipalRules prin)
         {
-            Statements = stmt;
+            Interest = interest;
+            Principal = prin;
         }
         
         public override void Visit (Visitor v)
@@ -22,7 +24,7 @@ namespace AbstractSyntaxTree.InternalTypes
 
         public override string Print (int depth)
         {
-            return "CreditPaymentRules {" + NewLine(depth + 1) + Statements.Print(depth + 1) + NewLine(depth + 1) + "}";
+            return "CreditPaymentRules {" + NewLine(depth + 1) + Interest.Print(depth + 1) + Principal.Print(depth+1) + NewLine(depth) + "}";
         }
     }
 }

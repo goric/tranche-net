@@ -27,6 +27,9 @@ namespace tc
         public CollateralItem CollateralItem { get; set; }
         public Deal Deal { get; set; }
         public CreditPaymentRules CreditPaymentRules { get; set; }
+        public InterestRules InterestRules { get; set; }
+        public PrincipalRules PrincipalRules { get; set; }
+        public InternalRuleList InternalRuleList { get; set; }
         public Securities Securities { get; set; }
         public Settings Settings { get; set; }
         public Simulation Simulation { get; set; }

@@ -7,9 +7,9 @@ namespace AbstractSyntaxTree.InternalTypes
 {
     public class Simulation : Statement
     {
-        public StatementList Statements { get; set; }
+        public Rules Statements { get; set; }
 
-        public Simulation (StatementList items)
+        public Simulation (Rules items)
         {
             Statements = items;
         }

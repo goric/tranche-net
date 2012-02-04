@@ -115,14 +115,4 @@ Simulation
 
 		Required.
 	*/
-
-	Rules
-	{
-		/*
-			Rules for how the collateral should be simulated in this run. Based on randomness
-			or properties in the collateral.
-
-			Required.
-		*/
-	} 
 }

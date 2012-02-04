@@ -38,7 +38,6 @@
 %type<Securities> securitySection
 %type<Simulation> simulationSection
 %type<InternalRuleList> rulesListOpt 
-%type<Rules> rulesList
 %type<Bond> secListOpt
 %type<CreditPaymentRules> creditRulesOpt
 %type<InterestRules> interestRules
@@ -62,9 +61,9 @@ statementList	:										{ $$ = new StatementList(); $$.Location = CurrentLocati
 				| statement statementList				{ $$ = new StatementList($1, $2); $$.Location = CurrentLocationSpan; }
 				;
 
-statement		: SEMI
+statement		
 				/*| IDENTIFIER SEMI						{ $$ = new StatementVariable(CurrentLocationSpan, $1.Value); $$.Location = CurrentLocationSpan; }*/
-				| IDENTIFIER ASSIGN expression			{ $$ = new StatementVariable(CurrentLocationSpan, $1.Value, $3); $$.Location = CurrentLocationSpan; }
+				: IDENTIFIER ASSIGN expression			{ $$ = new StatementVariable(CurrentLocationSpan, $1.Value, $3); $$.Location = CurrentLocationSpan; }
 				| LBRACE statementList RBRACE			{ $$ = new Block($2); $$.Location = CurrentLocationSpan; }
 				| IF LPAREN expression RPAREN statement			{ $$ = new IfThen($3, $5); $$.Location = CurrentLocationSpan; }
 				/*| IF LPAREN expression RPAREN statement ELSE statement  { $$ = new IfThenElse($3, $5, $7); $$.Location = CurrentLocationSpan; }*/
@@ -81,10 +80,12 @@ creditRulesOpt	:																{ $$ = new CreditPaymentRules(); $$.Location = C
 				| CREDITPAYMENTRULES LBRACE interestRules principalRules RBRACE	{ $$ = new CreditPaymentRules($3,$4); $$.Location = CurrentLocationSpan; }
 				;
 
-interestRules	: INTEREST LBRACE rulesListOpt RBRACE	{ $$ = new InterestRules($3); $$.Location = CurrentLocationSpan; }
+interestRules	:										{ $$ = new InterestRules(); $$.Location = CurrentLocationSpan; }
+				| INTEREST LBRACE rulesListOpt RBRACE	{ $$ = new InterestRules($3); $$.Location = CurrentLocationSpan; }
 				;
 
-principalRules	: PRINCIPAL LBRACE rulesListOpt RBRACE	{ $$ =  new PrincipalRules($3); $$.Location = CurrentLocationSpan; }
+principalRules	:										{ $$ =  new PrincipalRules(); $$.Location = CurrentLocationSpan; }
+				| PRINCIPAL LBRACE rulesListOpt RBRACE	{ $$ =  new PrincipalRules($3); $$.Location = CurrentLocationSpan; }
 				;
 
 rulesListOpt	:										{ $$ = new InternalRuleList(); $$.Location = CurrentLocationSpan; }
@@ -96,7 +97,7 @@ boolListOpt		: rulesListOpt							{ $$ = $1; $$.Location = CurrentLocationSpan; 
 				| AND compExpression boolListOpt		{ $$ = new InternalRuleListAnd($2, $3); $$.Location = CurrentLocationSpan; }
 				;
 
-simulationSection	: SIMULATION LBRACE rulesList RBRACE	{ $$ = new Simulation($3); $$.Location = CurrentLocationSpan; }
+simulationSection	: SIMULATION LBRACE statementList RBRACE	{ $$ = new Simulation($3); $$.Location = CurrentLocationSpan; }
 					;
 
 collListOpt		:															{ $$ = new CollateralItem(); $$.Location = CurrentLocationSpan; }
@@ -105,9 +106,6 @@ collListOpt		:															{ $$ = new CollateralItem(); $$.Location = CurrentL
 
 secListOpt		:												{ $$ = new Bond(); $$.Location = CurrentLocationSpan; }
 				| BOND LBRACE statementList RBRACE secListOpt	{ $$ = new Bond($3, $5); $$.Location = CurrentLocationSpan; }
-				;
-
-rulesList		: RULES LBRACE rulesListOpt RBRACE		{ $$ = new Rules($3); $$.Location = CurrentLocationSpan; }
 				;
 
 expression		: IDENTIFIER							{ $$ = new Identifier(CurrentLocationSpan, $1.Value); $$.Location = CurrentLocationSpan; }

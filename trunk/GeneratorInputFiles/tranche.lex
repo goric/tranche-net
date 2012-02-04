@@ -58,7 +58,7 @@ Character	'\\u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]'
 "**"				{ yylval.Token = new Token(Tokens.EXP, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.EXP); return (int) Tokens.EXP; }
 ".'"				{ yylval.Token = new Token(Tokens.AUTOPROP, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.AUTOPROP); return (int) Tokens.AUTOPROP; }
 "."					{ yylval.Token = new Token(Tokens.DOT, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.DOT); return (int) Tokens.DOT; }
-".."				{ yylval.Token = new Token(Tokens.DOTDOT, yytext, yyline, yycol); return (int)Tokens.DOTDOT;if(isDebug) Console.WriteLine(Tokens.DOTDOT); }
+".."				{ yylval.Token = new Token(Tokens.DOTDOT, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.DOTDOT); return (int)Tokens.DOTDOT; }
 ","					{ yylval.Token = new Token(Tokens.COMMA, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.COMMA); return (int) Tokens.COMMA; }
 
 "int"              	{ yylval.Token = new Token(Tokens.TINT, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.TINT); return (int) Tokens.TINT; }
@@ -97,6 +97,6 @@ public bool isDebug = false;
 
 public override void yyerror(string format, params object[] args)
 {
-	Console.Write("Line: {0}", yyline);
+	Console.Write("Line: {0} ", yyline);
 	Console.WriteLine(format, args);
 }

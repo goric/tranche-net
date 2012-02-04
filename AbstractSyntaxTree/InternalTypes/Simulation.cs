@@ -7,11 +7,11 @@ namespace AbstractSyntaxTree.InternalTypes
 {
     public class Simulation : Statement
     {
-        public Rules Statements { get; set; }
+        public StatementList Statements { get; set; }
 
-        public Simulation (Rules items)
+        public Simulation (StatementList stmts)
         {
-            Statements = items;
+            Statements = stmts;
         }
         
         public override void Visit (Visitor v)

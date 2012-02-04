@@ -3,8 +3,5 @@ Securities {}
 CreditPaymentRules {}
 Simulation
 {
-	Rules
-	{
-		print("Hello, world!")
-	} 
+	print("Hello, world!")
 }

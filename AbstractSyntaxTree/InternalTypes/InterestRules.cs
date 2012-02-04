@@ -9,6 +9,7 @@ namespace AbstractSyntaxTree.InternalTypes
     {
         public Expression Statements { get; set; }
 
+        public InterestRules () { }
         public InterestRules (Expression stmt)
         {
             Statements = stmt;
@@ -21,6 +22,8 @@ namespace AbstractSyntaxTree.InternalTypes
 
         public override string Print (int depth)
         {
+            if (Statements == null)
+                return string.Empty;
             return "Interest {" + NewLine(depth + 1) + Statements.Print(depth + 1) + NewLine(depth) + "}" + NewLine(depth);
         }
     }

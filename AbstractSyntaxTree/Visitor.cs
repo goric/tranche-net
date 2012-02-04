@@ -73,7 +73,6 @@ namespace AbstractSyntaxTree
         public virtual void VisitInterestRules (InternalTypes.InterestRules n) { }
         public virtual void VisitPrincipalRules (InternalTypes.PrincipalRules n) { }
         public virtual void VisitSimulation (InternalTypes.Simulation n) { }
-        public virtual void VisitRules (InternalTypes.Rules n) { }
         public virtual void VisitCollateralItem (InternalTypes.CollateralItem n) { }
         public virtual void VisitBond (InternalTypes.Bond n) { }
 

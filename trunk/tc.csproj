@@ -8,8 +8,8 @@
     <ProjectGuid>{0E408228-7AEA-4291-A05D-590D998A9583}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Tranche</RootNamespace>
-    <AssemblyName>Tranche</AssemblyName>
+    <RootNamespace>tc</RootNamespace>
+    <AssemblyName>tc</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>

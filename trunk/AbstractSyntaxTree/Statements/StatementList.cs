@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace AbstractSyntaxTree
 {
@@ -29,8 +26,8 @@ namespace AbstractSyntaxTree
 
             if (Tail.IsEmpty)
                 return Head.Print(depth) + ";";
-            else
-                return Head.Print(depth) + ";" + NewLine(depth) + Tail.Print(depth);
+            
+            return Head.Print(depth) + ";" + NewLine(depth) + Tail.Print(depth);
         }
 
         public override void Visit (Visitor v)

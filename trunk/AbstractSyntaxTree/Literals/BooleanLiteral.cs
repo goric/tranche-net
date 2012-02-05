@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace AbstractSyntaxTree
+﻿namespace AbstractSyntaxTree
 {
     public class BooleanLiteral : Expression
     {
@@ -19,7 +14,7 @@ namespace AbstractSyntaxTree
             v.VisitBooleanLiteral(this);
         }
 
-        public override String Print (int depth)
+        public override string Print (int depth)
         {
             return Val.ToString();
         }

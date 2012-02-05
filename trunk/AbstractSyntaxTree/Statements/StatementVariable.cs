@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 using QUT.Gppg;
 
@@ -9,7 +6,7 @@ namespace AbstractSyntaxTree
 {
     public class StatementVariable : Statement
     {
-        public string ID { get; set; }
+        public string Id { get; set; }
         public bool HasValue { get; set; }
         public Expression InitialValue { get; set; }
 
@@ -17,23 +14,23 @@ namespace AbstractSyntaxTree
         {
             HasValue = false;
             Location = loc;
-            ID = id;
+            Id = id;
         }
 
         public StatementVariable (LexLocation loc, string id, Expression value)
         {
             HasValue = true;
             Location = loc;
-            ID = id;
+            Id = id;
             InitialValue = value;
         }
 
         public override String Print (int depth)
         {
             if (!HasValue)
-                return ID;
+                return Id;
 
-            return ID + " = " + InitialValue.Print(depth);
+            return Id + " = " + InitialValue.Print(depth);
         }
 
         public override void Visit (Visitor v)

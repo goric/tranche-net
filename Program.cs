@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
 using System.Text;
 
@@ -21,10 +20,10 @@ namespace tc
             Compile(args);
         }
 
-        private static void Compile (string[] args)
+        private static void Compile (IEnumerable<string> args)
         {
             //combine multiple source files
-            StringBuilder source = new StringBuilder();
+            var source = new StringBuilder();
 
             foreach (var file in args)
                 source.Append(File.ReadAllText(file));

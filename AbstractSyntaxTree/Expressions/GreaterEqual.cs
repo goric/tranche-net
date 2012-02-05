@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System;
-using System.Linq;
-using System.Text;
-
+﻿
 namespace AbstractSyntaxTree
 {
     public class GreaterEqual : BinaryExpression

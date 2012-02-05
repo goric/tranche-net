@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+﻿
 namespace AbstractSyntaxTree
 {
     public class ExpressionList : Expression
@@ -30,9 +26,9 @@ namespace AbstractSyntaxTree
                 return "";
 
             if (Tail.IsEmpty)
-                return Head.Print(depth).ToString();
-            else
-                return Head.Print(depth) + "," + Tail.Print(depth);
+                return Head.Print(depth);
+            
+            return Head.Print(depth) + "," + Tail.Print(depth);
         }
 
         public override void Visit (Visitor v)

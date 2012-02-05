@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using SyntaxAnalysis;
+﻿using SyntaxAnalysis;
 
 using QUT.Gppg;
 
@@ -17,15 +12,16 @@ namespace tc
 
         public Token (Tokens type)
         {
-            this.TokenType = type;
+            TokenType = type;
         }
         public Token (Tokens type, string value)
         {
-            this.TokenType = type;
+            TokenType = type;
             Value = value;
         }
         public Token (Tokens type, string value, int line, int column, string file = "")
         {
+            TokenType = type;
             Value = value;
             Source = new LexLocation(line, column, 0, 0);
         }

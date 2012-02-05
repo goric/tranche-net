@@ -1,16 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace AbstractSyntaxTree
+﻿namespace AbstractSyntaxTree
 {
     public class Statement : Node
     {
-        public Statement ()
-        {
-        }
-
         public override void Visit (Visitor v)
         {
             v.VisitStatement(this);
@@ -22,10 +13,7 @@ namespace AbstractSyntaxTree
         /// <returns></returns>
         public Block WrapInBlock()
         {
-            if (this is Block)
-                return (Block)this;
-            else
-                return new Block(this);
+            return this is Block ? (Block) this : new Block(this);
         }
     }
 }

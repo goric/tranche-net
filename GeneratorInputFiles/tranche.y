@@ -32,20 +32,11 @@
 
 /* Non-terminals, tranche-specific */
 %type<DeclarationClass> settingsOpt dealOpt collateralSection securitySection simulationSection secListOpt creditRulesOpt
-/*
-%type<Deal> dealOpt
-%type<Collateral> collateralSection
-%type<Securities> securitySection
-%type<Simulation> simulationSection
-*/
 %type<InternalRuleList> rulesListOpt 
 %type<CollateralItem> collListOpt
 %type<Bond> secListOpt
 %type<InterestRules> interestRules
 %type<PrincipalRules> principalRules
-/*
-%type<CreditPaymentRules> creditRulesOpt
-*/
 
 %%
 
@@ -67,7 +58,7 @@ statementList	:										{ $$ = new StatementList(); $$.Location = CurrentLocati
 
 statement		
 				/*| IDENTIFIER SEMI						{ $$ = new StatementVariable(CurrentLocationSpan, $1.Value); $$.Location = CurrentLocationSpan; }*/
-				: IDENTIFIER ASSIGN expression			{ $$ = new StatementVariable(CurrentLocationSpan, $1.Value, $3); $$.Location = CurrentLocationSpan; }
+				: IDENTIFIER ASSIGN expression			{ $$ = new Assign(new Identifier(CurrentLocationSpan, $1.Value), $3); $$.Location = CurrentLocationSpan; }
 				| LBRACE statementList RBRACE			{ $$ = new Block($2); $$.Location = CurrentLocationSpan; }
 				| IF LPAREN expression RPAREN statement			{ $$ = new IfThen($3, $5); $$.Location = CurrentLocationSpan; }
 				/*| IF LPAREN expression RPAREN statement ELSE statement  { $$ = new IfThenElse($3, $5, $7); $$.Location = CurrentLocationSpan; }*/

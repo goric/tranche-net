@@ -50,10 +50,12 @@
     <Compile Include="MethodDescriptor.cs" />
     <Compile Include="Scope.cs" />
     <Compile Include="ScopeManager.cs" />
+    <Compile Include="TrancheCompilerException.cs" />
     <Compile Include="TypeClass.cs" />
     <Compile Include="TypeFunction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TypeObject.cs" />
+    <Compile Include="TypeString.cs" />
     <Compile Include="TypeVoid.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

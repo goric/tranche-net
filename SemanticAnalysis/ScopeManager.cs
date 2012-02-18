@@ -49,5 +49,39 @@ namespace SemanticAnalysis
             containingClass.Descriptor.Methods.Add(md);
             return md;
         }
+
+        public MemberDescriptor AddMember(string name, InternalType type, TypeClass containingClass)
+        {
+            var descriptor = new MemberDescriptor(type, name, containingClass.Descriptor);
+            CurrentScope.Descriptors.Add(name, descriptor);
+            containingClass.Descriptor.Fields.Add(descriptor);
+            return descriptor;
+        }
+
+
+        public Descriptor Find(string name, Func<Descriptor, bool> pred)
+        {
+            return Find(name, pred, CurrentScope);
+        }
+        public Descriptor Find(string name, Func<Descriptor, bool> pred, Scope s, bool currentOnly = false)
+        {
+            Scope checkScope = s;
+
+            while (checkScope != null)
+            {
+                if (checkScope.HasSymbol(name))
+                {
+                    Descriptor d = checkScope.Descriptors[name];
+                    if (pred(d))
+                        return d;
+                }
+                if (!currentOnly)
+                    checkScope = checkScope.Parent;
+                else
+                    checkScope = null;
+            }
+
+            return null;
+        }
     }
 }

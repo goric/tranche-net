@@ -4,7 +4,7 @@ using SemanticAnalysis;
 
 namespace ILGen.trancheMethods.Uncallable
 {
-    public class Deal : InternalMethod
+    public class Deal : UncallableInternalMethod
     {
         public Deal ()
             : base("Deal", new TypeVoid(), new Dictionary<string, InternalType> { })

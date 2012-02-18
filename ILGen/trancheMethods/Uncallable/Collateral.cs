@@ -4,7 +4,7 @@ using SemanticAnalysis;
 
 namespace ILGen.trancheMethods.Uncallable
 {
-    public class Collateral : InternalMethod
+    public class Collateral : UncallableInternalMethod
     {
         public Collateral ()
             : base("Collateral", new TypeVoid(), new Dictionary<string, InternalType> { })

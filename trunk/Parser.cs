@@ -4,7 +4,7 @@
 
 // GPPG version 1.4.0
 // Machine:  VOSTRO
-// DateTime: 2/17/2012 9:12:32 PM
+// DateTime: 2/18/2012 10:26:53 AM
 // UserName: Tim
 // Input file <..\GeneratorInputFiles\tranche.y>
 
@@ -245,7 +245,7 @@ internal class Parser: ShiftReduceParser<SemanticValue, LexLocation>
 { CurrentSemanticValue.StatementList = new StatementList(ValueStack[ValueStack.Depth-2].Statement, ValueStack[ValueStack.Depth-1].StatementList); CurrentSemanticValue.StatementList.Location = CurrentLocationSpan; }
         break;
       case 9: // statement -> IDENTIFIER, ASSIGN, expression
-{ CurrentSemanticValue.Statement = new StatementVariable(CurrentLocationSpan, ValueStack[ValueStack.Depth-3].Token.Value, ValueStack[ValueStack.Depth-1].Expression); CurrentSemanticValue.Statement.Location = CurrentLocationSpan; }
+{ CurrentSemanticValue.Statement = new Assign(new Identifier(CurrentLocationSpan, ValueStack[ValueStack.Depth-3].Token.Value), ValueStack[ValueStack.Depth-1].Expression); CurrentSemanticValue.Statement.Location = CurrentLocationSpan; }
         break;
       case 10: // statement -> LBRACE, statementList, RBRACE
 { CurrentSemanticValue.Statement = new Block(ValueStack[ValueStack.Depth-2].StatementList); CurrentSemanticValue.Statement.Location = CurrentLocationSpan; }

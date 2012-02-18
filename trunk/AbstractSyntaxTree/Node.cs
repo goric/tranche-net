@@ -3,7 +3,7 @@ using System.Text;
 
 using QUT.Gppg;
 
-//using SemanticAnalysis;
+using SemanticAnalysis;
 
 namespace AbstractSyntaxTree
 {
@@ -12,7 +12,7 @@ namespace AbstractSyntaxTree
         private const int TAB_SPACES = 4;
 
         public LexLocation Location { get; set; }
-        //public virtual InternalType InternalType { get; set; }
+        public virtual InternalType InternalType { get; set; }
 
         protected String NewLine (int depth)
         {

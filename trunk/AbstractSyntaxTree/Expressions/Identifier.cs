@@ -4,10 +4,8 @@ using QUT.Gppg;
 
 namespace AbstractSyntaxTree
 {
-    public class Identifier : Expression
+    public class Identifier : LValue
     {
-        public String Id { get; set; }
-
         public Identifier (LexLocation loc, String id)
         {
             Location = loc;

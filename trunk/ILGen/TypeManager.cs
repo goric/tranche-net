@@ -36,9 +36,20 @@ namespace ILGen
             TypeBuilderMap.Add(n.Name, new TypeBuilderInfo(n, Module));
         }
 
+        public void AddField(string typeName, Assign n)
+        {
+            TypeBuilderInfo info = TypeBuilderMap[typeName];
+            FieldBuilder fieldBuilder = info.Builder.DefineField(n.Name, LookupCilType(n.InternalType), FieldAttributes.Public);
+            info.FieldMap.Add(n.Name, fieldBuilder);
+        }
+
         public void AddMethod (string typeName, DeclarationMethod n)
         {
             var info = TypeBuilderMap[typeName];
+            //simulation is the entry point, must be static
+            var attributes = n.Name.Equals("Simulation", StringComparison.OrdinalIgnoreCase)
+                                ? MethodAttributes.Public | MethodAttributes.Static
+                                : MethodAttributes.Public;
 
             if(InternalMethodManager.IsSystemMethod(n.Name))
             {
@@ -46,7 +57,7 @@ namespace ILGen
                 var funcInfo = method.FuncInfo;
                 var formals = funcInfo.Formals.Values.Select(LookupCilType);
                 var m = info.Builder.DefineMethod(n.Name,
-                                                  MethodAttributes.Public | MethodAttributes.Static,
+                                                  attributes,
                                                   LookupCilType(funcInfo.ReturnType),
                                                   formals.ToArray());
 
@@ -67,6 +78,11 @@ namespace ILGen
 
             //store this MethodBuilder, keyed off its name
             info.MethodMap.Add(n.Name, new MethodBuilderInfo(methodBuilder, BuildFormalMap(n.Descriptor.Formals)));
+        }
+
+        public TypeBuilderInfo GetBuilderInfo(string typeName)
+        {
+            return TypeBuilderMap[typeName];
         }
 
         private Dictionary<string, ArgumentInfo> BuildFormalMap (IEnumerable<FormalDescriptor> formals)

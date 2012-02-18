@@ -10,20 +10,20 @@ namespace AbstractSyntaxTree
     public class DeclarationClass : Statement
     {
         public String Name { get; set; }
-        public StatementList Declarations { get; set; }
+        public StatementList Statements { get; set; }
         public TypeClass Type { get; set; }
         public ClassDescriptor Descriptor { get; set; }
 
         public DeclarationClass(String name, StatementList decls)
         {
             Name = name;
-            Declarations = decls;
+            Statements = decls;
         }
         
         public override String Print(int depth)
         {
             return "class " + Name + "{" + NewLine(depth + 1) 
-                + (Declarations == null ? string.Empty : Declarations.Print(depth + 1)) 
+                + (Statements == null ? string.Empty : Statements.Print(depth + 1)) 
                 + NewLine(depth) + "}";
         }
 

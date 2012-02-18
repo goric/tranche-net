@@ -47,6 +47,8 @@
     <Compile Include="DeclarationMethod.cs" />
     <Compile Include="Expressions\BinaryExpression.cs" />
     <Compile Include="Declaration.cs" />
+    <Compile Include="Expressions\LValue.cs" />
+    <Compile Include="Statements\Assign.cs" />
     <Compile Include="Statements\Block.cs" />
     <Compile Include="Literals\BooleanLiteral.cs" />
     <Compile Include="Expressions\Equal.cs" />

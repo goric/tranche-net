@@ -47,10 +47,11 @@ namespace AbstractSyntaxTree
         public virtual void VisitStatement (Statement n) { }
         public virtual void VisitStatementExpression (StatementExpression n) { }
         public virtual void VisitBlock (Block n) { }
-        public virtual void VisitStatementVariable (StatementVariable n) { }
+        //public virtual void VisitStatementVariable (StatementVariable n) { }
         public virtual void VisitIfThen (IfThen n) { }
         public virtual void VisitIfThenElse (IfThenElse n) { }
         public virtual void VisitInvoke (Invoke n) { }
+        public virtual void VisitAssign(Assign n) { }
 
         public virtual void VisitStatementList (StatementList n)
         {

@@ -43,8 +43,12 @@ namespace tc
             var root = parser.SyntaxTreeRoot;
             Console.WriteLine(root.Print(0));
 
-            var pass = new FirstPass(root, new ScopeManager());
-            pass.Run();
+            var mgr = new ScopeManager();
+
+            var first = new FirstPass(root, mgr);
+            var second = new SecondPass(root, mgr);
+            first.Run();
+            second.Run();
             
             var cg = new CodeGenerator(args[0].Substring(args[0].LastIndexOf("\\") + 1).Replace(".tn", ""));
             cg.Generate(root);

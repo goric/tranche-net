@@ -17,9 +17,11 @@ namespace SemanticAnalysis
         public virtual bool IsSupertype (TypeVoid checkType) { return false; }
         public virtual bool IsSupertype (TypeObject checkType) { return false; }
         public virtual bool IsSupertype (TypeClass checkType) { return false; }
+        public virtual bool IsSupertype(TypeString checkType) { return false; }
 
         public virtual bool IsFunction { get { return false; } }
         public virtual bool IsClass { get { return false; } }
+        public virtual bool IsString { get { return false; } }
         
         public virtual int Size { get { return 0; } }
 

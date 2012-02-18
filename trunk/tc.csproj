@@ -61,11 +61,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FirstPass.cs" />
+    <Compile Include="SemanticPasses\FirstPass.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scanner.cs" />
+    <Compile Include="SemanticPasses\SecondPass.cs" />
     <Compile Include="SemanticValue.cs" />
     <Compile Include="Token.cs" />
   </ItemGroup>

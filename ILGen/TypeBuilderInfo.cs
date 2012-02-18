@@ -12,6 +12,7 @@ namespace ILGen
         public string Name { get { return Builder.Name; } }
         public Dictionary<string, MethodBuilderInfo> MethodMap { get; private set; }
         public Dictionary<string, FieldBuilder> FieldMap { get; private set; }
+        public ConstructorBuilderInfo ConstructorBuilder { get; set; }
 
         public TypeBuilderInfo (DeclarationClass n, ModuleBuilder module)
         {

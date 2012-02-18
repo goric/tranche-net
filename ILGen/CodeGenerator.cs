@@ -68,18 +68,17 @@ namespace ILGen
 
         #region Internal Types
 
-        public override void VisitSettings(Settings n)
-        {
-            SetupInternalClass(n, "Settings");
+        public override void VisitSettings(Settings n) { HandleInternalType("Settings", n); }
+        public override void VisitDeal(Deal n) { HandleInternalType("Deal", n); }
+        public override void VisitCollateral(Collateral n) { HandleInternalType("Collateral", n); }
+        public override void VisitSecurities(Securities n) { HandleInternalType("Securities", n); }
+        public override void VisitCreditPaymentRules(CreditPaymentRules n) { HandleInternalType("CreditPaymentRules", n); }
+        public override void VisitSimulation (Simulation n) { HandleInternalType("Simulation", n); }
 
-            n.Statements.Visit(this);
-            _gen.Emit(OpCodes.Ret);
-        }
-
-        public override void VisitSimulation (Simulation n)
+        private void HandleInternalType(string name, DeclarationClass n)
         {
-            SetupInternalClass(n, "Simulation");
-            
+            SetupInternalClass(n, name);
+
             n.Statements.Visit(this);
             _gen.Emit(OpCodes.Ret);
         }
@@ -98,17 +97,6 @@ namespace ILGen
         {
             n.Expression.Visit(this);
         }
-
-        /*public override void VisitStatementVariable(StatementVariable n)
-        {
-            _typeManager.AddField(_currentType, n);
-            n.Expression.Visit(this);
-
-            FieldBuilder field = _currentTypeBuilder.FieldMap[n.Name];
-            //push the "this" argument
-            _gen.Emit(OpCodes.Ldarg_0);
-            _gen.Emit(OpCodes.Stfld, field);
-        }*/
 
         public override void VisitInvoke (Invoke n)
         {
@@ -153,16 +141,21 @@ namespace ILGen
         {
             _typeManager.AddClass(n);
 
-            var methodInfo = CreateInternalClassCtor(n, name);
-            _gen = methodInfo.Builder.GetILGenerator();
-
             if (name.Equals(ENTRY_POINT, StringComparison.OrdinalIgnoreCase))
             {
+                var methodInfo = CreateEntryPointMethod(n, name);
+                _gen = methodInfo.Builder.GetILGenerator();
                 _assemblyBuilder.SetEntryPoint(methodInfo.Builder);
+            }
+            else
+            {
+                var ctorInfo = CreateInternalClassCtor(n, name);
+                _gen = ctorInfo.Builder.GetILGenerator();
             }
         }
 
-        private MethodBuilderInfo CreateInternalClassCtor(DeclarationClass n, string name)
+        //this is a special case since it will be the entry point..
+        private MethodBuilderInfo CreateEntryPointMethod(DeclarationClass n, string name)
         {
             _currentType = name;
             _currentTypeBuilder = _typeManager.GetBuilderInfo(n.Name);
@@ -172,7 +165,20 @@ namespace ILGen
             method.Descriptor = new MethodDescriptor(n.Type, name, n.Descriptor);
 
             _typeManager.AddMethod(name, method);
-            return _typeManager.GetMethodBuilderInfo(name, name);
+            return _typeManager.GetMethodBuilderInfo(_currentType, n.Name);
+        }
+
+        private ConstructorBuilderInfo CreateInternalClassCtor(DeclarationClass n, string name)
+        {
+            _currentType = name;
+            _currentTypeBuilder = _typeManager.GetBuilderInfo(n.Name);
+
+            var method = new DeclarationMethod(new TypeVoid(), name, n.Statements);
+            method.Type = new TypeFunction(true) { Formals = new Dictionary<string, InternalType>() };
+            method.Descriptor = new MethodDescriptor(n.Type, name, n.Descriptor);
+
+            _typeManager.AddCtor(name, method);
+            return _currentTypeBuilder.ConstructorBuilder;
         }
 
         private void ApplyAssignmentCallback()

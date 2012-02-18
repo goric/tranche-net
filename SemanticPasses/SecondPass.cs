@@ -1,4 +1,7 @@
-﻿using AbstractSyntaxTree;
+﻿using System;
+using System.Linq;
+
+using AbstractSyntaxTree;
 using AbstractSyntaxTree.InternalTypes;
 using SemanticAnalysis;
 using ILGen;
@@ -53,6 +56,7 @@ namespace tc
             n.Type = _currentClass;
 
             _currentClass.Descriptor.Scope = _currentClass.Scope = classScope;
+            AddCtorIfNone(classScope, n.Name);
             _mgr.PopScope();
         }
 
@@ -75,6 +79,16 @@ namespace tc
             _lastSeenType = null;
             root.Visit(this);
             return _lastSeenType;
+        }
+
+        private void AddCtorIfNone(Scope classScope, string name)
+        {
+            var ctor = _currentClass.Descriptor.Methods.Where(p => p.Name.Equals(_currentClass.ClassName, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
+            if (ctor == null)
+            {
+                var func = new TypeFunction(name) { ReturnType = new TypeVoid(), IsConstructor = true, Scope = classScope };
+                _mgr.AddMethod(name, func, _currentClass);
+            }
         }
     }
 }

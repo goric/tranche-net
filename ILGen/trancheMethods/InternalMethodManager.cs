@@ -13,11 +13,9 @@ namespace ILGen
         static InternalMethodManager ()
         {
             var target = typeof(InternalMethod);
-            var uncallable = typeof(UncallableInternalMethod);
 
             Func<Type, bool> filter = p => p.IsSubclassOf(target)
-                                                && !p.IsAbstract
-                                                && p != typeof(UncallableInternalMethod);
+                                                && !p.IsAbstract;
 
             var types = Assembly.GetExecutingAssembly().GetTypes().Where(filter);
 

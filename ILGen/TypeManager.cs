@@ -43,6 +43,21 @@ namespace ILGen
             info.FieldMap.Add(n.Name, fieldBuilder);
         }
 
+        public void AddCtor(string typeName, DeclarationMethod n)
+        {
+            TypeBuilderInfo info = TypeBuilderMap[typeName];
+            TypeFunction function = n.Type as TypeFunction;
+
+            //simulation is the entry point, must be static
+            var attributes = n.Name.Equals("Simulation", StringComparison.OrdinalIgnoreCase)
+                                ? MethodAttributes.Public | MethodAttributes.Static
+                                : MethodAttributes.Public;
+
+            ConstructorBuilder builderObj = info.Builder.DefineConstructor(attributes, CallingConventions.Standard, ArgumentTypes(function));
+
+            info.ConstructorBuilder = new ConstructorBuilderInfo(builderObj, BuildFormalMap(n.Descriptor.Formals));
+        }
+
         public void AddMethod (string typeName, DeclarationMethod n)
         {
             var info = TypeBuilderMap[typeName];
@@ -72,7 +87,7 @@ namespace ILGen
             var function = (TypeFunction) n.Type;
 
             var methodBuilder = info.Builder.DefineMethod(n.Name,
-                                                          MethodAttributes.Public,
+                                                          attributes,
                                                           returnType,
                                                           function.Formals.Values.Select(LookupCilType).ToArray());
 
@@ -105,6 +120,11 @@ namespace ILGen
             }
             
             return type.CilType;
+        }
+
+        private Type[] ArgumentTypes(TypeFunction f)
+        {
+            return f.Formals.Values.Select(c => LookupCilType(c)).ToArray();
         }
     }
 }

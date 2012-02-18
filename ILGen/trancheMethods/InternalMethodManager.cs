@@ -17,7 +17,6 @@ namespace ILGen
 
             Func<Type, bool> filter = p => p.IsSubclassOf(target)
                                                 && !p.IsAbstract
-                                                && !p.IsSubclassOf(uncallable)
                                                 && p != typeof(UncallableInternalMethod);
 
             var types = Assembly.GetExecutingAssembly().GetTypes().Where(filter);

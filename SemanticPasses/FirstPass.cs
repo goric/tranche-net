@@ -29,7 +29,7 @@ namespace tc
             foreach (var m in InternalMethodManager.Methods)
             {
                 m.FuncInfo.Scope = _scopeMgr.TopScope;
-                _scopeMgr.AddMethod(m.Name, m.FuncInfo, globalClass, null, true);
+                _scopeMgr.AddMethod(m.Name.ToLower(), m.FuncInfo, globalClass, null, true);
             }
         }
 

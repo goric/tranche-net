@@ -4,14 +4,14 @@ namespace AbstractSyntaxTree
 {
     public class Prog : Node
     {
-        public Settings Settings { get; set; }
-        public Deal Deal { get; set; }
-        public Collateral Collateral { get; set; }
-        public Securities Securities { get; set; }
-        public CreditPaymentRules CreditPaymentRules { get; set; }
-        public Simulation Simulation { get; set; }
+        public DeclarationClass Settings { get; set; }
+        public DeclarationClass Deal { get; set; }
+        public DeclarationClass Collateral { get; set; }
+        public DeclarationClass Securities { get; set; }
+        public DeclarationClass CreditPaymentRules { get; set; }
+        public DeclarationClass Simulation { get; set; }
 
-        public Prog (Settings s, Deal d, Collateral c, Securities sec, CreditPaymentRules cpr, Simulation sim)
+        public Prog(DeclarationClass s, DeclarationClass d, DeclarationClass c, DeclarationClass sec, DeclarationClass cpr, DeclarationClass sim)
         {
             Settings = s;
             Deal = d;

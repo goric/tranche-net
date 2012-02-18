@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
+using SemanticAnalysis;
 
-namespace ILGen.trancheMethods
+namespace ILGen
 {
     public abstract class InternalMethod
     {
@@ -13,11 +11,22 @@ namespace ILGen.trancheMethods
         public const BindingFlags Public = BindingFlags.Public | BindingFlags.Instance;
 
         public string Name { get; private set; }
+        public TypeFunction FuncInfo { get; set; }
 
-        public InternalMethod (string name)
+        protected InternalMethod (string name)
         {
             Name = name;
         }
+        protected InternalMethod (string name, InternalType returnType, Dictionary<string, InternalType> formals)
+        {
+            Name = name;
+            FuncInfo = new TypeFunction(name)
+            {
+                ReturnType = returnType,
+                Formals = formals
+            };
+        }
+
 
         public abstract void Emit (ILGenerator gen);
     }

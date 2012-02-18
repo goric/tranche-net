@@ -31,17 +31,21 @@
 %type<ExpressionList> onePlusActuals actuals boolListOpt
 
 /* Non-terminals, tranche-specific */
-%type<Settings> settingsOpt
+%type<DeclarationClass> settingsOpt dealOpt collateralSection securitySection simulationSection secListOpt creditRulesOpt
+/*
 %type<Deal> dealOpt
 %type<Collateral> collateralSection
-%type<CollateralItem> collListOpt
 %type<Securities> securitySection
 %type<Simulation> simulationSection
+*/
 %type<InternalRuleList> rulesListOpt 
+%type<CollateralItem> collListOpt
 %type<Bond> secListOpt
-%type<CreditPaymentRules> creditRulesOpt
 %type<InterestRules> interestRules
 %type<PrincipalRules> principalRules
+/*
+%type<CreditPaymentRules> creditRulesOpt
+*/
 
 %%
 
@@ -77,7 +81,7 @@ securitySection : SECURITIES LBRACE secListOpt RBRACE		{ $$ = new Securities($3)
 				;
 
 creditRulesOpt	:																{ $$ = new CreditPaymentRules(); $$.Location = CurrentLocationSpan; }
-				| CREDITPAYMENTRULES LBRACE interestRules principalRules RBRACE	{ $$ = new CreditPaymentRules($3,$4); $$.Location = CurrentLocationSpan; }
+				| CREDITPAYMENTRULES LBRACE interestRules principalRules RBRACE	{ $$ = new CreditPaymentRules(new StatementList($3,$4)); $$.Location = CurrentLocationSpan; }
 				;
 
 interestRules	:										{ $$ = new InterestRules(); $$.Location = CurrentLocationSpan; }

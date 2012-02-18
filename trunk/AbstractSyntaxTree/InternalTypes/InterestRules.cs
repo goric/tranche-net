@@ -1,7 +1,7 @@
 ﻿
 namespace AbstractSyntaxTree.InternalTypes
 {
-    public class InterestRules : Statement
+    public class InterestRules : StatementList
     {
         public Expression Statements { get; set; }
 

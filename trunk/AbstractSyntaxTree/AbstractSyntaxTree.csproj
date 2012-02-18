@@ -43,7 +43,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DeclarationClass.cs" />
+    <Compile Include="DeclarationMethod.cs" />
     <Compile Include="Expressions\BinaryExpression.cs" />
+    <Compile Include="Declaration.cs" />
     <Compile Include="Statements\Block.cs" />
     <Compile Include="Literals\BooleanLiteral.cs" />
     <Compile Include="Expressions\Equal.cs" />
@@ -82,6 +85,12 @@
     <Compile Include="Literals\StringLiteral.cs" />
     <Compile Include="Visitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SemanticAnalysis\SemanticAnalysis.csproj">
+      <Project>{7F5D0551-17D7-4D74-8A94-E1F6799707EB}</Project>
+      <Name>SemanticAnalysis</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

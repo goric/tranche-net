@@ -1,26 +1,18 @@
 ﻿
+using SemanticAnalysis;
+
 namespace AbstractSyntaxTree.InternalTypes
 {
-    public class Settings : Statement
+    public class Settings : DeclarationClass
     {
-        public bool IsEmpty { get; set; }
-        public StatementList Statements { get; set; }
-
-        public Settings () { IsEmpty = true; }
-        public Settings (StatementList stmt)
+        public Settings () : this(null) { }
+        public Settings (StatementList stmt) : base("Settings", stmt)
         {
-            IsEmpty = false;
-            Statements = stmt;
         }
         
         public override void Visit (Visitor v)
         {
             v.VisitSettings(this);
-        }
-
-        public override string Print (int depth)
-        {
-            return "Settings {" + NewLine(depth + 1) + (IsEmpty ? string.Empty : Statements.Print(depth + 1)) + NewLine(depth) + "}";
         }
     }
 }

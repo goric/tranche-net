@@ -4,7 +4,9 @@ using System.IO;
 using System.Text;
 
 using LexicalAnalysis;
+using SemanticAnalysis;
 using SyntaxAnalysis;
+using ILGen;
 
 namespace tc
 {
@@ -20,7 +22,7 @@ namespace tc
             Compile(args);
         }
 
-        private static void Compile (IEnumerable<string> args)
+        private static void Compile (IList<string> args)
         {
             //combine multiple source files
             var source = new StringBuilder();
@@ -40,6 +42,14 @@ namespace tc
 
             var root = parser.SyntaxTreeRoot;
             Console.WriteLine(root.Print(0));
+
+            var pass = new FirstPass(root, new ScopeManager());
+            pass.Run();
+            
+            var cg = new CodeGenerator(args[0].Substring(args[0].LastIndexOf("\\") + 1).Replace(".tn", ""));
+            cg.Generate(root);
+            cg.WriteAssembly();
+            
             Console.Read();
         }
 

@@ -1,23 +1,15 @@
 ﻿
+using SemanticAnalysis;
+
 namespace AbstractSyntaxTree.InternalTypes
 {
-    public class Collateral : Statement
+    public class Collateral : DeclarationClass
     {
-        public StatementList CollateralItems { get; set; }
-
-        public Collateral (StatementList items)
-        {
-            CollateralItems = items;
-        }
+        public Collateral (StatementList tail) : base("Collateral", tail) { }
         
         public override void Visit (Visitor v)
         {
             v.VisitCollateral(this);
-        }
-
-        public override string Print (int depth)
-        {
-            return "Collateral {" + NewLine(depth + 1) + CollateralItems.Print(depth + 1) + NewLine(depth) + "}";
         }
     }
 }

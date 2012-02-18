@@ -1,23 +1,15 @@
 ﻿
+using SemanticAnalysis;
+
 namespace AbstractSyntaxTree.InternalTypes
 {
-    public class Simulation : Statement
+    public class Simulation : DeclarationClass
     {
-        public StatementList Statements { get; set; }
-
-        public Simulation (StatementList stmts)
-        {
-            Statements = stmts;
-        }
+        public Simulation (StatementList stmts) : base("Simulation", stmts) { }
         
         public override void Visit (Visitor v)
         {
             v.VisitSimulation(this);
-        }
-
-        public override string Print (int depth)
-        {
-            return "Simulation {" + NewLine(depth + 1) + Statements.Print(depth + 1) + NewLine(depth) + "}";
         }
     }
 }

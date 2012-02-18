@@ -4,7 +4,7 @@
 
 // GPPG version 1.4.0
 // Machine:  VOSTRO
-// DateTime: 2/4/2012 4:36:28 PM
+// DateTime: 2/17/2012 9:12:32 PM
 // UserName: Tim
 // Input file <..\GeneratorInputFiles\tranche.y>
 
@@ -53,8 +53,8 @@ internal class Parser: ShiftReduceParser<SemanticValue, LexLocation>
   private static string[] nonTerms = new string[] {
       "program", "statementList", "statement", "expression", "literal", "compExpression", 
       "onePlusActuals", "actuals", "boolListOpt", "settingsOpt", "dealOpt", "collateralSection", 
-      "collListOpt", "securitySection", "simulationSection", "rulesListOpt", 
-      "secListOpt", "creditRulesOpt", "interestRules", "principalRules", "$accept", 
+      "securitySection", "simulationSection", "secListOpt", "creditRulesOpt", 
+      "rulesListOpt", "collListOpt", "interestRules", "principalRules", "$accept", 
       };
 
   static Parser() {
@@ -63,9 +63,9 @@ internal class Parser: ShiftReduceParser<SemanticValue, LexLocation>
     states[2] = new State(-1);
     states[3] = new State(new int[]{4,94,5,-5},new int[]{-11,4});
     states[4] = new State(new int[]{5,85},new int[]{-12,5});
-    states[5] = new State(new int[]{7,76},new int[]{-14,6});
-    states[6] = new State(new int[]{9,52,10,-15},new int[]{-18,7});
-    states[7] = new State(new int[]{10,9},new int[]{-15,8});
+    states[5] = new State(new int[]{7,76},new int[]{-13,6});
+    states[6] = new State(new int[]{9,52,10,-15},new int[]{-16,7});
+    states[7] = new State(new int[]{10,9},new int[]{-14,8});
     states[8] = new State(-2);
     states[9] = new State(new int[]{13,10});
     states[10] = new State(new int[]{47,15,13,43,33,46,43,37,44,38,45,39,41,40,42,41,14,-7},new int[]{-2,11,-3,13,-4,51,-5,36,-6,42});
@@ -116,41 +116,41 @@ internal class Parser: ShiftReduceParser<SemanticValue, LexLocation>
     states[55] = new State(new int[]{14,56});
     states[56] = new State(-16);
     states[57] = new State(new int[]{13,58});
-    states[58] = new State(new int[]{38,61,14,-21},new int[]{-16,59});
+    states[58] = new State(new int[]{38,61,14,-21},new int[]{-17,59});
     states[59] = new State(new int[]{14,60});
     states[60] = new State(-20);
     states[61] = new State(new int[]{47,30,43,37,44,38,45,39,41,40,42,41},new int[]{-6,62,-4,71,-5,36});
-    states[62] = new State(new int[]{38,61,49,65,50,68,58,-34,59,-34,56,-34,57,-34,55,-34,54,-34,14,-21},new int[]{-9,63,-16,64});
+    states[62] = new State(new int[]{38,61,49,65,50,68,58,-34,59,-34,56,-34,57,-34,55,-34,54,-34,14,-21},new int[]{-9,63,-17,64});
     states[63] = new State(-22);
     states[64] = new State(-23);
     states[65] = new State(new int[]{47,30,43,37,44,38,45,39,41,40,42,41},new int[]{-6,66,-4,71,-5,36});
-    states[66] = new State(new int[]{38,61,49,65,50,68,58,-34,59,-34,56,-34,57,-34,55,-34,54,-34,14,-21},new int[]{-9,67,-16,64});
+    states[66] = new State(new int[]{38,61,49,65,50,68,58,-34,59,-34,56,-34,57,-34,55,-34,54,-34,14,-21},new int[]{-9,67,-17,64});
     states[67] = new State(-24);
     states[68] = new State(new int[]{47,30,43,37,44,38,45,39,41,40,42,41},new int[]{-6,69,-4,71,-5,36});
-    states[69] = new State(new int[]{38,61,49,65,50,68,58,-34,59,-34,56,-34,57,-34,55,-34,54,-34,14,-21},new int[]{-9,70,-16,64});
+    states[69] = new State(new int[]{38,61,49,65,50,68,58,-34,59,-34,56,-34,57,-34,55,-34,54,-34,14,-21},new int[]{-9,70,-17,64});
     states[70] = new State(-25);
     states[71] = new State(new int[]{58,18,59,20,56,22,57,24,55,26,54,28});
     states[72] = new State(new int[]{13,73});
-    states[73] = new State(new int[]{38,61,14,-21},new int[]{-16,74});
+    states[73] = new State(new int[]{38,61,14,-21},new int[]{-17,74});
     states[74] = new State(new int[]{14,75});
     states[75] = new State(-18);
     states[76] = new State(new int[]{13,77});
-    states[77] = new State(new int[]{8,80,14,-29},new int[]{-17,78});
+    states[77] = new State(new int[]{8,80,14,-29},new int[]{-15,78});
     states[78] = new State(new int[]{14,79});
     states[79] = new State(-14);
     states[80] = new State(new int[]{13,81});
     states[81] = new State(new int[]{47,15,13,43,33,46,43,37,44,38,45,39,41,40,42,41,14,-7},new int[]{-2,82,-3,13,-4,51,-5,36,-6,42});
     states[82] = new State(new int[]{14,83});
-    states[83] = new State(new int[]{8,80,14,-29},new int[]{-17,84});
+    states[83] = new State(new int[]{8,80,14,-29},new int[]{-15,84});
     states[84] = new State(-30);
     states[85] = new State(new int[]{13,86});
-    states[86] = new State(new int[]{6,89,14,-27},new int[]{-13,87});
+    states[86] = new State(new int[]{6,89,14,-27},new int[]{-18,87});
     states[87] = new State(new int[]{14,88});
     states[88] = new State(-13);
     states[89] = new State(new int[]{13,90});
     states[90] = new State(new int[]{47,15,13,43,33,46,43,37,44,38,45,39,41,40,42,41,14,-7},new int[]{-2,91,-3,13,-4,51,-5,36,-6,42});
     states[91] = new State(new int[]{14,92});
-    states[92] = new State(new int[]{6,89,14,-27},new int[]{-13,93});
+    states[92] = new State(new int[]{6,89,14,-27},new int[]{-18,93});
     states[93] = new State(-28);
     states[94] = new State(new int[]{13,95});
     states[95] = new State(new int[]{47,15,13,43,33,46,43,37,44,38,45,39,41,40,42,41,14,-7},new int[]{-2,96,-3,13,-4,51,-5,36,-6,42});
@@ -162,7 +162,7 @@ internal class Parser: ShiftReduceParser<SemanticValue, LexLocation>
     states[101] = new State(-4);
 
     rules[1] = new Rule(-21, new int[]{-1,2});
-    rules[2] = new Rule(-1, new int[]{-10,-11,-12,-14,-18,-15});
+    rules[2] = new Rule(-1, new int[]{-10,-11,-12,-13,-16,-14});
     rules[3] = new Rule(-10, new int[]{});
     rules[4] = new Rule(-10, new int[]{3,13,-2,14});
     rules[5] = new Rule(-11, new int[]{});
@@ -173,24 +173,24 @@ internal class Parser: ShiftReduceParser<SemanticValue, LexLocation>
     rules[10] = new Rule(-3, new int[]{13,-2,14});
     rules[11] = new Rule(-3, new int[]{33,66,-4,12,-3});
     rules[12] = new Rule(-3, new int[]{-4});
-    rules[13] = new Rule(-12, new int[]{5,13,-13,14});
-    rules[14] = new Rule(-14, new int[]{7,13,-17,14});
-    rules[15] = new Rule(-18, new int[]{});
-    rules[16] = new Rule(-18, new int[]{9,13,-19,-20,14});
+    rules[13] = new Rule(-12, new int[]{5,13,-18,14});
+    rules[14] = new Rule(-13, new int[]{7,13,-15,14});
+    rules[15] = new Rule(-16, new int[]{});
+    rules[16] = new Rule(-16, new int[]{9,13,-19,-20,14});
     rules[17] = new Rule(-19, new int[]{});
-    rules[18] = new Rule(-19, new int[]{24,13,-16,14});
+    rules[18] = new Rule(-19, new int[]{24,13,-17,14});
     rules[19] = new Rule(-20, new int[]{});
-    rules[20] = new Rule(-20, new int[]{37,13,-16,14});
-    rules[21] = new Rule(-16, new int[]{});
-    rules[22] = new Rule(-16, new int[]{38,-6,-9});
-    rules[23] = new Rule(-9, new int[]{-16});
+    rules[20] = new Rule(-20, new int[]{37,13,-17,14});
+    rules[21] = new Rule(-17, new int[]{});
+    rules[22] = new Rule(-17, new int[]{38,-6,-9});
+    rules[23] = new Rule(-9, new int[]{-17});
     rules[24] = new Rule(-9, new int[]{49,-6,-9});
     rules[25] = new Rule(-9, new int[]{50,-6,-9});
-    rules[26] = new Rule(-15, new int[]{10,13,-2,14});
-    rules[27] = new Rule(-13, new int[]{});
-    rules[28] = new Rule(-13, new int[]{6,13,-2,14,-13});
-    rules[29] = new Rule(-17, new int[]{});
-    rules[30] = new Rule(-17, new int[]{8,13,-2,14,-17});
+    rules[26] = new Rule(-14, new int[]{10,13,-2,14});
+    rules[27] = new Rule(-18, new int[]{});
+    rules[28] = new Rule(-18, new int[]{6,13,-2,14,-18});
+    rules[29] = new Rule(-15, new int[]{});
+    rules[30] = new Rule(-15, new int[]{8,13,-2,14,-15});
     rules[31] = new Rule(-4, new int[]{47});
     rules[32] = new Rule(-4, new int[]{47,66,-8,12});
     rules[33] = new Rule(-4, new int[]{-5});
@@ -224,19 +224,19 @@ internal class Parser: ShiftReduceParser<SemanticValue, LexLocation>
     {
       case 2: // program -> settingsOpt, dealOpt, collateralSection, securitySection, 
               //            creditRulesOpt, simulationSection
-{ CurrentSemanticValue.Prog = new Prog(ValueStack[ValueStack.Depth-6].Settings, ValueStack[ValueStack.Depth-5].Deal, ValueStack[ValueStack.Depth-4].Collateral, ValueStack[ValueStack.Depth-3].Securities, ValueStack[ValueStack.Depth-2].CreditPaymentRules, ValueStack[ValueStack.Depth-1].Simulation); SyntaxTreeRoot = CurrentSemanticValue.Prog; CurrentSemanticValue.Prog.Location = CurrentLocationSpan; }
+{ CurrentSemanticValue.Prog = new Prog(ValueStack[ValueStack.Depth-6].DeclarationClass, ValueStack[ValueStack.Depth-5].DeclarationClass, ValueStack[ValueStack.Depth-4].DeclarationClass, ValueStack[ValueStack.Depth-3].DeclarationClass, ValueStack[ValueStack.Depth-2].DeclarationClass, ValueStack[ValueStack.Depth-1].DeclarationClass); SyntaxTreeRoot = CurrentSemanticValue.Prog; CurrentSemanticValue.Prog.Location = CurrentLocationSpan; }
         break;
       case 3: // settingsOpt -> /* empty */
-{ CurrentSemanticValue.Settings = new Settings(); CurrentSemanticValue.Settings.Location = CurrentLocationSpan; }
+{ CurrentSemanticValue.DeclarationClass = new Settings(); CurrentSemanticValue.DeclarationClass.Location = CurrentLocationSpan; }
         break;
       case 4: // settingsOpt -> SETTINGS, LBRACE, statementList, RBRACE
-{ CurrentSemanticValue.Settings = new Settings(ValueStack[ValueStack.Depth-2].StatementList);  }
+{ CurrentSemanticValue.DeclarationClass = new Settings(ValueStack[ValueStack.Depth-2].StatementList);  }
         break;
       case 5: // dealOpt -> /* empty */
-{ CurrentSemanticValue.Deal = new Deal(); CurrentSemanticValue.Deal.Location = CurrentLocationSpan; }
+{ CurrentSemanticValue.DeclarationClass = new Deal(); CurrentSemanticValue.DeclarationClass.Location = CurrentLocationSpan; }
         break;
       case 6: // dealOpt -> DEAL, LBRACE, statementList, RBRACE
-{ CurrentSemanticValue.Deal = new Deal(ValueStack[ValueStack.Depth-2].StatementList); CurrentSemanticValue.Deal.Location = CurrentLocationSpan; }
+{ CurrentSemanticValue.DeclarationClass = new Deal(ValueStack[ValueStack.Depth-2].StatementList); CurrentSemanticValue.DeclarationClass.Location = CurrentLocationSpan; }
         break;
       case 7: // statementList -> /* empty */
 { CurrentSemanticValue.StatementList = new StatementList(); CurrentSemanticValue.StatementList.Location = CurrentLocationSpan; }
@@ -257,17 +257,17 @@ internal class Parser: ShiftReduceParser<SemanticValue, LexLocation>
 { CurrentSemanticValue.Statement = new StatementExpression(ValueStack[ValueStack.Depth-1].Expression); CurrentSemanticValue.Statement.Location = CurrentLocationSpan; }
         break;
       case 13: // collateralSection -> COLLATERAL, LBRACE, collListOpt, RBRACE
-{ CurrentSemanticValue.Collateral = new Collateral(ValueStack[ValueStack.Depth-2].CollateralItem); CurrentSemanticValue.Collateral.Location = CurrentLocationSpan; }
+{ CurrentSemanticValue.DeclarationClass = new Collateral(ValueStack[ValueStack.Depth-2].CollateralItem); CurrentSemanticValue.DeclarationClass.Location = CurrentLocationSpan; }
         break;
       case 14: // securitySection -> SECURITIES, LBRACE, secListOpt, RBRACE
-{ CurrentSemanticValue.Securities = new Securities(ValueStack[ValueStack.Depth-2].Bond); CurrentSemanticValue.Securities.Location = CurrentLocationSpan; }
+{ CurrentSemanticValue.DeclarationClass = new Securities(ValueStack[ValueStack.Depth-2].Bond); CurrentSemanticValue.DeclarationClass.Location = CurrentLocationSpan; }
         break;
       case 15: // creditRulesOpt -> /* empty */
-{ CurrentSemanticValue.CreditPaymentRules = new CreditPaymentRules(); CurrentSemanticValue.CreditPaymentRules.Location = CurrentLocationSpan; }
+{ CurrentSemanticValue.DeclarationClass = new CreditPaymentRules(); CurrentSemanticValue.DeclarationClass.Location = CurrentLocationSpan; }
         break;
       case 16: // creditRulesOpt -> CREDITPAYMENTRULES, LBRACE, interestRules, principalRules, 
                //                   RBRACE
-{ CurrentSemanticValue.CreditPaymentRules = new CreditPaymentRules(ValueStack[ValueStack.Depth-3].InterestRules,ValueStack[ValueStack.Depth-2].PrincipalRules); CurrentSemanticValue.CreditPaymentRules.Location = CurrentLocationSpan; }
+{ CurrentSemanticValue.DeclarationClass = new CreditPaymentRules(new StatementList(ValueStack[ValueStack.Depth-3].InterestRules,ValueStack[ValueStack.Depth-2].PrincipalRules)); CurrentSemanticValue.DeclarationClass.Location = CurrentLocationSpan; }
         break;
       case 17: // interestRules -> /* empty */
 { CurrentSemanticValue.InterestRules = new InterestRules(); CurrentSemanticValue.InterestRules.Location = CurrentLocationSpan; }
@@ -297,7 +297,7 @@ internal class Parser: ShiftReduceParser<SemanticValue, LexLocation>
 { CurrentSemanticValue.ExpressionList = new InternalRuleListAnd(ValueStack[ValueStack.Depth-2].Expression, ValueStack[ValueStack.Depth-1].ExpressionList); CurrentSemanticValue.ExpressionList.Location = CurrentLocationSpan; }
         break;
       case 26: // simulationSection -> SIMULATION, LBRACE, statementList, RBRACE
-{ CurrentSemanticValue.Simulation = new Simulation(ValueStack[ValueStack.Depth-2].StatementList); CurrentSemanticValue.Simulation.Location = CurrentLocationSpan; }
+{ CurrentSemanticValue.DeclarationClass = new Simulation(ValueStack[ValueStack.Depth-2].StatementList); CurrentSemanticValue.DeclarationClass.Location = CurrentLocationSpan; }
         break;
       case 27: // collListOpt -> /* empty */
 { CurrentSemanticValue.CollateralItem = new CollateralItem(); CurrentSemanticValue.CollateralItem.Location = CurrentLocationSpan; }

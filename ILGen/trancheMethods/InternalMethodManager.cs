@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Reflection;
 
-namespace ILGen.trancheMethods
+namespace ILGen
 {
     public static class InternalMethodManager
     {
-        private static Dictionary<string, InternalMethod> _methods = new Dictionary<string, InternalMethod>();
+        private static readonly Dictionary<string, InternalMethod> _methods = new Dictionary<string, InternalMethod>();
         public static IEnumerable<InternalMethod> Methods { get { return _methods.Values; } }
 
         static InternalMethodManager ()
@@ -26,6 +25,11 @@ namespace ILGen.trancheMethods
         public static bool IsSystemMethod(string name)
         {
             return _methods.ContainsKey(name);
+        }
+
+        public static InternalMethod Lookup (string name)
+        {
+            return _methods[name];
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿
 namespace AbstractSyntaxTree.InternalTypes
 {
-    public class PrincipalRules : Statement
+    public class PrincipalRules : StatementList
     {
         public Expression Statements { get; set; }
 

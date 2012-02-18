@@ -28,5 +28,6 @@ namespace tc
         public Securities Securities { get; set; }
         public Settings Settings { get; set; }
         public Simulation Simulation { get; set; }
+        public DeclarationClass DeclarationClass { get; set; }
     }
 }

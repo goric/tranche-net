@@ -16,17 +16,17 @@ Character	'\\u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]'
 
 %%
 
-"Settings"				{ yylval.Token = new Token(Tokens.SETTINGS, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.SETTINGS); return (int) Tokens.SETTINGS; }
-"Deal"					{ yylval.Token = new Token(Tokens.DEAL, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.DEAL); return (int) Tokens.DEAL; }
-"Collateral"			{ yylval.Token = new Token(Tokens.COLLATERAL, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.COLLATERAL); return (int) Tokens.COLLATERAL; }
-"CollateralItem"		{ yylval.Token = new Token(Tokens.COLLATERALITEM, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.COLLATERALITEM); return (int) Tokens.COLLATERALITEM; }
-"Securities"			{ yylval.Token = new Token(Tokens.SECURITIES, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.SECURITIES); return (int) Tokens.SECURITIES; }
-"Bond"					{ yylval.Token = new Token(Tokens.BOND, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.BOND); return (int) Tokens.BOND; }
-"CreditPaymentRules"	{ yylval.Token = new Token(Tokens.CREDITPAYMENTRULES, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.CREDITPAYMENTRULES); return (int) Tokens.CREDITPAYMENTRULES; }
-"Interest"				{ yylval.Token = new Token(Tokens.INTEREST, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.INTEREST); return (int) Tokens.INTEREST; }
-"Principal"				{ yylval.Token = new Token(Tokens.PRINCIPAL, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.PRINCIPAL); return (int) Tokens.PRINCIPAL; }
-"Simulation"			{ yylval.Token = new Token(Tokens.SIMULATION, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.SIMULATION); return (int) Tokens.SIMULATION; }
-"Rules"					{ yylval.Token = new Token(Tokens.RULES, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.RULES); return (int) Tokens.RULES; }
+".Settings"				{ yylval.Token = new Token(Tokens.SETTINGS, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.SETTINGS); return (int) Tokens.SETTINGS; }
+".Deal"					{ yylval.Token = new Token(Tokens.DEAL, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.DEAL); return (int) Tokens.DEAL; }
+".Collateral"			{ yylval.Token = new Token(Tokens.COLLATERAL, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.COLLATERAL); return (int) Tokens.COLLATERAL; }
+".CollateralItem"		{ yylval.Token = new Token(Tokens.COLLATERALITEM, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.COLLATERALITEM); return (int) Tokens.COLLATERALITEM; }
+".Securities"			{ yylval.Token = new Token(Tokens.SECURITIES, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.SECURITIES); return (int) Tokens.SECURITIES; }
+".Bond"					{ yylval.Token = new Token(Tokens.BOND, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.BOND); return (int) Tokens.BOND; }
+".CreditPaymentRules"	{ yylval.Token = new Token(Tokens.CREDITPAYMENTRULES, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.CREDITPAYMENTRULES); return (int) Tokens.CREDITPAYMENTRULES; }
+".Interest"				{ yylval.Token = new Token(Tokens.INTEREST, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.INTEREST); return (int) Tokens.INTEREST; }
+".Principal"			{ yylval.Token = new Token(Tokens.PRINCIPAL, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.PRINCIPAL); return (int) Tokens.PRINCIPAL; }
+".Simulation"			{ yylval.Token = new Token(Tokens.SIMULATION, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.SIMULATION); return (int) Tokens.SIMULATION; }
+".Rules"				{ yylval.Token = new Token(Tokens.RULES, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.RULES); return (int) Tokens.RULES; }
 
 
 "->"          	    { yylval.Token = new Token(Tokens.RULE, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.RULE); return (int) Tokens.RULE; }

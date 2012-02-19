@@ -14,9 +14,7 @@ namespace ILGen
         {
             var target = typeof(InternalMethod);
 
-            Func<Type, bool> filter = p => p.IsSubclassOf(target)
-                                                && !p.IsAbstract;
-
+            Func<Type, bool> filter = p => p.IsSubclassOf(target) && !p.IsAbstract;
             var types = Assembly.GetExecutingAssembly().GetTypes().Where(filter);
 
             foreach (var subType in types)

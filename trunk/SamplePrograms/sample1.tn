@@ -1,18 +1,18 @@
-Settings
+.Settings
 {
 	OutputFile: "C:\tranche\out.csv"
 }
 
-Deal
+.Deal
 {
 	Name: "BACM 2005-3"
 	CutoffDate: "7/1/2005"
 }
 
 
-Collateral
+.Collateral
 {
-	CollateralItem
+	.CollateralItem
 	{
 		ID: 0
 		PropertyName: "Woolworth Building"
@@ -24,7 +24,7 @@ Collateral
 		City: "New York"
 		State: "NY"
 	}
-	CollateralItem
+	.CollateralItem
 	{
 		ID: 1
 		PropertyName: "Ridgedale Center"
@@ -36,7 +36,7 @@ Collateral
 		City: "Minnetonka"
 		State: "MN"
 	}
-	CollateralItem
+	.CollateralItem
 	{
 		ID: 2
 		PropertyName: "Marley Station"
@@ -48,7 +48,7 @@ Collateral
 		City: "Glen Burnie"
 		State: "MD"
 	}
-	CollateralItem
+	.CollateralItem
 	{
 		ID: 3
 		PropertyName: "Fiesta Mall"
@@ -63,9 +63,9 @@ Collateral
 }
 
 
-Securities
+.Securities
 {
-	Bond
+	.Bond
 	{
 		ID: 0
 		CUSIP: "05947UR42"
@@ -73,7 +73,7 @@ Securities
 		OriginalBalance: 505,650,000 
 		CurrentBalance: 125,483,169 
 	}
-	Bond
+	.Bond
 	{
 		ID: 1
 		CUSIP: "05947UR59"
@@ -81,7 +81,7 @@ Securities
 		OriginalBalance: 279,216,000 
 		CurrentBalance: 279,216,000 
 	}
-	Bond
+	.Bond
 	{
 		ID: 2
 		CUSIP: "05947US41"
@@ -92,14 +92,14 @@ Securities
 }
 
 
-CreditPaymentRules
+.CreditPaymentRules
 {
-	Interest
+	.Interest
 	{
 		-> Class="A-2" or Class="A-3" /* denotes these receive interest payments equally */
 		-> Class="X"
 	}
-	Principal
+	.Principal
 	{
 		/* In this example, class X is interest-only */
 		-> CUSIP="05947UR42"
@@ -108,11 +108,13 @@ CreditPaymentRules
 }
 
 
-Simulation
+.Simulation
 {
 	/*
 		Section to hold the information for this simulation. Saving results, rules to apply, etc.
 
 		Required.
 	*/
+	print(Settings.OutputFile);
+	
 }

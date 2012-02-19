@@ -27,6 +27,9 @@ namespace AbstractSyntaxTree
         public virtual void VisitGreaterEqual (GreaterEqual n) { }
         public virtual void VisitGreater (Greater n) { }
         public virtual void VisitSmaller (Smaller n) { }
+        public virtual void VisitDereferenceField(DereferenceField n) { }
+        public virtual void VisitInstantiateClass(InstantiateClass n) { }
+
         public virtual void VisitExprList (ExpressionList n)
         {
             if (!n.IsEmpty)

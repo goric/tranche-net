@@ -4,7 +4,6 @@ using System.Linq;
 using AbstractSyntaxTree;
 using AbstractSyntaxTree.InternalTypes;
 using SemanticAnalysis;
-using ILGen;
 
 namespace tc
 {
@@ -52,7 +51,7 @@ namespace tc
 
             _currentClass.Descriptor = (ClassDescriptor)_mgr.Find(n.Name, p => p is ClassDescriptor);
 
-            var declarationType = CheckSubTree(n.Statements);
+            CheckSubTree(n.Statements);
             n.Type = _currentClass;
 
             _currentClass.Descriptor.Scope = _currentClass.Scope = classScope;
@@ -83,7 +82,7 @@ namespace tc
 
         private void AddCtorIfNone(Scope classScope, string name)
         {
-            var ctor = _currentClass.Descriptor.Methods.Where(p => p.Name.Equals(_currentClass.ClassName, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
+            var ctor = _currentClass.Descriptor.Methods.SingleOrDefault(p => p.Name.Equals(_currentClass.ClassName, StringComparison.OrdinalIgnoreCase));
             if (ctor == null)
             {
                 var func = new TypeFunction(name) { ReturnType = new TypeVoid(), IsConstructor = true, Scope = classScope };

@@ -6,7 +6,7 @@ namespace tc
     /// <summary>
     /// Struct used in the Parser generator as the TValue input for the ShiftReduceParser base class.
     /// This allows to strongly type both the terminals and the non-terminals in the grammar input file
-    /// so each semantic action defined will produce an ASTNode of the proper type.
+    /// so each semantic action defined will produce a Node of the proper type.
     /// </summary>
     internal struct SemanticValue
     {

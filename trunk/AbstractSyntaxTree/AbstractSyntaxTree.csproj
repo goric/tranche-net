@@ -47,6 +47,8 @@
     <Compile Include="DeclarationMethod.cs" />
     <Compile Include="Expressions\BinaryExpression.cs" />
     <Compile Include="Declaration.cs" />
+    <Compile Include="Expressions\DereferenceField.cs" />
+    <Compile Include="Expressions\InstantiateClass.cs" />
     <Compile Include="Expressions\LValue.cs" />
     <Compile Include="Statements\Assign.cs" />
     <Compile Include="Statements\Block.cs" />

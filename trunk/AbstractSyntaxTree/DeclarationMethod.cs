@@ -12,6 +12,12 @@ namespace AbstractSyntaxTree
         public InternalType Type { get; set; }
         public MethodDescriptor Descriptor { get; set; }
 
+        public DeclarationMethod(String name, StatementList body)
+        {
+            ReturnType = new TypeVoid();
+            Name = name;
+            Body = body;
+        }
         public DeclarationMethod(InternalType returnType, String name, StatementList body)
         {
             ReturnType = returnType;

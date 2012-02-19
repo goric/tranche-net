@@ -1,6 +1,4 @@
 ﻿
-using SemanticAnalysis;
-
 namespace AbstractSyntaxTree.InternalTypes
 {
     public class Simulation : DeclarationClass

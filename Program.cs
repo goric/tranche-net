@@ -49,8 +49,9 @@ namespace tc
             var second = new SecondPass(root, mgr);
             first.Run();
             second.Run();
-            
-            var cg = new CodeGenerator(args[0].Substring(args[0].LastIndexOf("\\") + 1).Replace(".tn", ""));
+
+            var asmName = args[0].Substring(args[0].LastIndexOf("\\", StringComparison.Ordinal) + 1).Replace(".tn", "");
+            var cg = new CodeGenerator(asmName);
             cg.Generate(root);
             cg.WriteAssembly();
             

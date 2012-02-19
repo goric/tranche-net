@@ -1,7 +1,7 @@
-Collateral {}
-Securities {}
-CreditPaymentRules {}
-Simulation
+.Collateral {}
+.Securities {}
+.CreditPaymentRules {}
+.Simulation
 {
 	print("Hello, world!")
 }

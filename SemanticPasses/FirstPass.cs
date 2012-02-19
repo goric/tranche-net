@@ -3,8 +3,6 @@ using AbstractSyntaxTree.InternalTypes;
 using SemanticAnalysis;
 using ILGen;
 
-using QUT.Gppg;
-
 namespace tc
 {
     /// <summary>
@@ -56,9 +54,9 @@ namespace tc
 
         public override void VisitDeclarationClass(DeclarationClass n)
         {
-            TypeClass cls = new TypeClass(n.Name);
+            var cls = new TypeClass(n.Name);
             _currentClass = cls;
-            n.Descriptor = _scopeMgr.AddClass(cls.ClassName, cls, null);
+            n.Descriptor = _scopeMgr.AddClass(cls.ClassName, cls);
             n.Type = cls;
         }
     }

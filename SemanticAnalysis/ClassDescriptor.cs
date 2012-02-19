@@ -24,7 +24,7 @@ namespace SemanticAnalysis
 
         public override string ToString ()
         {
-            return "CFlatType_Class<" + Type + ">";
+            return "InternalType_Class<" + Type + ">";
         }
     }
 }

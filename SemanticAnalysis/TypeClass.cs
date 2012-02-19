@@ -12,8 +12,8 @@ namespace SemanticAnalysis
         public ClassDescriptor Descriptor { get; set; }
         public Scope Scope { get; set; }
 
-        public Dictionary<String, InternalType> Fields;
-        public Dictionary<String, InternalType> Methods;
+        public Dictionary<String, InternalType> Fields { get; set; }
+        public Dictionary<String, InternalType> Methods { get; set; }
 
         public TypeClass (string name, ClassDescriptor parent = null)
         {

@@ -21,8 +21,8 @@ namespace SemanticAnalysis
         public Block BodyBlock { get; set; }
         public Block CurrentBlock { get; set; }
 
-        public Dictionary<string, InternalType> Formals;
-        public Dictionary<string, InternalType> Locals;
+        public Dictionary<string, InternalType> Formals { get; set; }
+        public Dictionary<string, InternalType> Locals { get; set; }
 
         public TypeFunction(string name)
             : this(false)

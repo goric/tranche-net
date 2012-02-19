@@ -38,8 +38,11 @@ namespace ILGen
 
         public void AddField(string typeName, Assign n)
         {
+            var flags = Enum.GetNames(typeof (InternalTypes)).Contains(n.Name)
+                            ? FieldAttributes.Public | FieldAttributes.Static
+                            : FieldAttributes.Public;
             TypeBuilderInfo info = TypeBuilderMap[typeName];
-            FieldBuilder fieldBuilder = info.Builder.DefineField(n.Name, LookupCilType(n.InternalType), FieldAttributes.Public);
+            FieldBuilder fieldBuilder = info.Builder.DefineField(n.Name, LookupCilType(n.InternalType), flags);
             info.FieldMap.Add(n.Name, fieldBuilder);
         }
 

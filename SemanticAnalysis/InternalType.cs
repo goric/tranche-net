@@ -27,7 +27,7 @@ namespace SemanticAnalysis
 
         public abstract Type CilType { get; }
 
-        public virtual InternalType BaseType { get { return this; } set { /* do nothing */} }
+        public virtual InternalType BaseType { get { return this; } }
 
         public bool IsSubtypeOf (InternalType t)
         {

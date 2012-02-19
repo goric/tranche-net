@@ -1,13 +1,9 @@
 ﻿using System;
 
-//using SemanticAnalysis;
-
 namespace AbstractSyntaxTree
 {
     public class Expression : Node
     {
-        //protected CFlatType Type { get; set; }
-
         public override String Print (int depth)
         {
             return "";

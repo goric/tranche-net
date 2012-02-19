@@ -27,7 +27,7 @@
 %type<Prog> program
 %type<StatementList> statementList 
 %type<Statement> statement 
-%type<Expression> expression literal compExpression
+%type<Expression> expression literal compExpression lvalue
 %type<ExpressionList> onePlusActuals actuals boolListOpt
 
 /* Non-terminals, tranche-specific */
@@ -103,10 +103,14 @@ secListOpt		:												{ $$ = new Bond(); $$.Location = CurrentLocationSpan; }
 				| BOND LBRACE statementList RBRACE secListOpt	{ $$ = new Bond($3, $5); $$.Location = CurrentLocationSpan; }
 				;
 
-expression		: IDENTIFIER							{ $$ = new Identifier(CurrentLocationSpan, $1.Value); $$.Location = CurrentLocationSpan; }
-				| IDENTIFIER LPAREN actuals RPAREN		{ $$ = new Invoke($1.Value, $3); $$.Location = CurrentLocationSpan; } 
+expression		: IDENTIFIER LPAREN actuals RPAREN		{ $$ = new Invoke($1.Value, $3); $$.Location = CurrentLocationSpan; } 
 				| literal								{ $$ = $1; $$.Location = CurrentLocationSpan; }
 				| compExpression						{ $$ = $1; $$.Location = CurrentLocationSpan; }
+				| lvalue								{ $$ = $1; $$.Location = CurrentLocationSpan; }
+				;
+
+lvalue			: IDENTIFIER							{ $$ = new Identifier(CurrentLocationSpan, $1.Value); $$.Location = CurrentLocationSpan; }
+				| lvalue DOT IDENTIFIER					{ $$ = new DereferenceField($1, $3.Value); $$.Location = CurrentLocationSpan; }
 				;
 
 compExpression	: expression EQ expression				{ $$ = new Equal($1, $3); $$.Location = CurrentLocationSpan; }
@@ -122,6 +126,7 @@ actuals			:					{ $$ = new ExpressionList(); $$.Location = CurrentLocationSpan; 
 				;
 
 onePlusActuals	: expression		{ $$ = new ExpressionList($1, new ExpressionList()); $$.Location = CurrentLocationSpan; }
+				| expression COMMA actuals { $$ = new ExpressionList($1, $3); $$.Location = CurrentLocationSpan; }
 				;
 
 literal			: LITERAL_INT		{ $$ = new IntegerLiteral(Int32.Parse($1.Value.ToString().Replace(",",""))); $$.Location = CurrentLocationSpan; } 

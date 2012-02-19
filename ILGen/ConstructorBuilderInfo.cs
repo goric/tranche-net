@@ -2,16 +2,15 @@
 
 using System.Reflection;
 using System.Reflection.Emit;
-using SemanticAnalysis;
 
 namespace ILGen
 {
     public class ConstructorBuilderInfo : BuilderInfo
     {
-        public ConstructorBuilderInfo(ConstructorBuilder builder)
+        public ConstructorBuilderInfo(MethodBase builder)
             : this(builder, null) { }
 
-        public ConstructorBuilderInfo(ConstructorBuilder builder, Dictionary<string, ArgumentInfo> formals)
+        public ConstructorBuilderInfo(MethodBase builder, Dictionary<string, ArgumentInfo> formals)
             : base(builder, formals) { }
 
         public ConstructorBuilder Builder

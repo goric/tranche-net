@@ -17,6 +17,7 @@ namespace tc
         private readonly Node _root;
         private readonly ScopeManager _mgr;
         private TypeClass _currentClass;
+        private int _itemIncrementer;
 
         public SecondPass(Node n, ScopeManager mgr)
         {
@@ -46,6 +47,7 @@ namespace tc
 
         public override void VisitDeclarationClass(DeclarationClass n)
         {
+            _itemIncrementer = 0;
             _currentClass = new TypeClass(n.Name);
             var classScope = _mgr.PushScope(string.Format("class {0}", _currentClass.ClassName));
 
@@ -57,6 +59,24 @@ namespace tc
             _currentClass.Descriptor.Scope = _currentClass.Scope = classScope;
             AddCtorIfNone(classScope, n.Name);
             _mgr.PopScope();
+        }
+
+        public override void VisitCollateralItem(CollateralItem n)
+        {
+            _mgr.PushScope(string.Format("CollateralItem{0}", _itemIncrementer++));
+            n.Statements.Visit(this);
+            _mgr.PopScope();
+
+            if (!n.Tail.IsEmpty)
+                n.Tail.Visit(this);
+        }
+
+        public override void VisitStatementList(StatementList n)
+        {
+            if (n.IsEmpty) return;
+
+            n.Head.Visit(this);
+            n.Tail.Visit(this);
         }
 
         public override void VisitAssign(Assign n)
@@ -71,6 +91,18 @@ namespace tc
         public override void VisitStringLiteral(StringLiteral n)
         {
             n.InternalType = _lastSeenType = new TypeString();
+        }
+        public override void VisitIntegerLiteral(IntegerLiteral n)
+        {
+            n.InternalType = _lastSeenType = new TypeInteger();
+        }
+        public override void VisitBooleanLiteral(BooleanLiteral n)
+        {
+            n.InternalType = _lastSeenType = new TypeBoolean();
+        }
+        public override void VisitRealLiteral(RealLiteral n)
+        {
+            n.InternalType = _lastSeenType = new TypeReal();
         }
 
         public InternalType CheckSubTree(Node root)

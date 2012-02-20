@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -30,9 +31,9 @@ namespace ILGen
         private readonly string _assemblyName;
         private string _currentType;
         private Action<ILGenerator> _assignmentCallback;
+        private int _internalListIndex;
 
         private const string ENTRY_POINT = "Simulation";
-
 
         public CodeGenerator (string assemblyName)
         {
@@ -78,10 +79,27 @@ namespace ILGen
 
         public override void VisitSettings(Settings n) { HandleInternalType("Settings", n); }
         public override void VisitDeal(Deal n) { HandleInternalType("Deal", n); }
-        public override void VisitCollateral(Collateral n) { HandleInternalType("Collateral", n); }
-        public override void VisitSecurities(Securities n) { HandleInternalType("Securities", n); }
         public override void VisitCreditPaymentRules(CreditPaymentRules n) { HandleInternalType("CreditPaymentRules", n); }
         public override void VisitSimulation(Simulation n) { HandleInternalType("Simulation", n); }
+
+        public override void VisitCollateral(Collateral n)
+        {
+            SetupInternalClass(n, "Collateral");
+
+            AddListMemberToInternalClass("Collateral", "CollateralItems", "CollateralItem");
+
+            n.Statements.Visit(this);
+            _gen.Emit(OpCodes.Ret);
+        }
+        public override void VisitSecurities(Securities n) 
+        {
+            SetupInternalClass(n, "Securities");
+
+            AddListMemberToInternalClass("Securities", "Bonds", "Bond");
+
+            n.Statements.Visit(this);
+            _gen.Emit(OpCodes.Ret);
+        }
 
         private void HandleInternalType(string name, DeclarationClass n)
         {
@@ -89,6 +107,37 @@ namespace ILGen
 
             n.Statements.Visit(this);
             _gen.Emit(OpCodes.Ret);
+        }
+
+        private void AddMemberToInternalClass(string className, string fieldName, string underlyingClassName)
+        {
+            var type = _moduleBuilder.GetType(underlyingClassName);
+
+            _internalListIndex = 0;
+            _typeManager.AddInstanceField(className, fieldName, type);
+            var info = _typeManager.GetBuilderInfo(className);
+            var field = info.FieldMap[fieldName];
+
+            var underlyingInfo = _typeManager.GetBuilderInfo(underlyingClassName);
+            _gen.Emit(OpCodes.Ldarg_0);
+            _gen.Emit(OpCodes.Newobj, underlyingInfo.ConstructorBuilder.Builder);
+            //_gen.Emit(OpCodes.Newobj, type.GetConstructor(Type.EmptyTypes));
+            _gen.Emit(OpCodes.Stfld, field);
+        }
+        private void AddListMemberToInternalClass(string className, string fieldName, string underlyingClassName)
+        {
+            var type = _moduleBuilder.GetType(underlyingClassName);
+            var listType = typeof(List<>).MakeGenericType(type);
+
+            _internalListIndex = 0;
+            _typeManager.AddInstanceField(className, fieldName, listType);
+            var info = _typeManager.GetBuilderInfo(className);
+            var field = info.FieldMap[fieldName];
+
+            var ctor = TypeBuilder.GetConstructor(listType, typeof(List<>).GetConstructor(Type.EmptyTypes));
+            _gen.Emit(OpCodes.Ldarg_0);
+            _gen.Emit(OpCodes.Newobj, ctor);
+            _gen.Emit(OpCodes.Stfld, field);
         }
 
         #endregion
@@ -112,6 +161,31 @@ namespace ILGen
         public override void VisitStatementExpression (StatementExpression n)
         {
             n.Expression.Visit(this);
+        }
+
+        public override void VisitCollateralItem(CollateralItem n)
+        {
+            var collatType = _moduleBuilder.GetType("CollateralItem");
+            var ctor = _typeManager.GetBuilderInfo("CollateralItem").ConstructorBuilder.Builder;
+            //new up a tranchetypes.CollateralItem
+            _gen.DeclareLocal(collatType);
+            _gen.Emit(OpCodes.Call, ctor);
+            _gen.Emit(OpCodes.Stloc, _internalListIndex);
+
+            SetCurrentType("CollateralItem");
+            n.Statements.Visit(this);
+            SetCurrentType("Collateral");
+
+            // add current item to the list member variable
+            _gen.Emit(OpCodes.Ldarg_0);
+            _gen.Emit(OpCodes.Ldfld, _typeManager.GetBuilderInfo(_currentType).FieldMap["CollateralItems"]);
+            _gen.Emit(OpCodes.Ldloc, _internalListIndex);
+            _gen.Emit(OpCodes.Callvirt, typeof(List<trancheTypes.CollateralItem>).GetMethod("Add"));
+
+            _internalListIndex++;
+
+            if(!n.Tail.IsEmpty)
+                n.Tail.Visit(this);
         }
 
         public override void VisitInvoke (Invoke n)
@@ -147,12 +221,11 @@ namespace ILGen
 
             //either have to load the field if getting, or store it if setting
             // depends on who called me, assignment or dereference
-
-            // UBER-HACK!!
+            var shouldbeStatic = Enum.GetNames(typeof(InternalTypes)).Contains(field.Name);
             if (!n.IsLeftHandSide)
-                _gen.Emit(Enum.GetNames(typeof(InternalTypes)).Contains(n.Field) ? OpCodes.Ldsfld : OpCodes.Ldfld, field);
+                _gen.Emit(shouldbeStatic ? OpCodes.Ldsfld : OpCodes.Ldfld, field);
             else
-                _assignmentCallback = gen => gen.Emit(Enum.GetNames(typeof(InternalTypes)).Contains(n.Field) ? OpCodes.Stsfld : OpCodes.Stfld, field);
+                _assignmentCallback = gen => gen.Emit(shouldbeStatic ? OpCodes.Stsfld : OpCodes.Stfld, field);
         }
 
         public override void VisitIdentifier(Identifier n)
@@ -180,6 +253,8 @@ namespace ILGen
             _lastWalkedType = field.FieldType;
         }
 
+        #region visit literals
+
         public override void VisitStringLiteral (StringLiteral n)
         {
             var escaped = n.Value.Substring(1, n.Value.Length - 2);
@@ -206,6 +281,9 @@ namespace ILGen
             _lastWalkedType = typeof(int);
         }
 
+        #endregion
+
+        #region implementation details
 
         private void SetupInternalClass(DeclarationClass n, string name)
         {
@@ -272,11 +350,18 @@ namespace ILGen
 
         private void ApplyAssignmentCallback()
         {
-            if (_assignmentCallback != null)
-            {
-                _assignmentCallback(_gen);
-                _assignmentCallback = null;
-            }
+            if (_assignmentCallback == null) return;
+
+            _assignmentCallback(_gen);
+            _assignmentCallback = null;
         }
+
+        private void SetCurrentType(string name)
+        {
+            _currentType = name;
+            _currentTypeBuilder = _typeManager.GetBuilderInfo(name);
+        }
+
+        #endregion
     }
 }

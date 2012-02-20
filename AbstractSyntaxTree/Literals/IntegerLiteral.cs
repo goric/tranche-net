@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace AbstractSyntaxTree
 {
@@ -13,7 +14,7 @@ namespace AbstractSyntaxTree
         
         public override String Print(int depth)
         {
-            return Value.ToString();
+            return Value.ToString(CultureInfo.InvariantCulture);
         }
 
         public override void Visit (Visitor v)

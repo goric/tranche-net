@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-
+using AbstractSyntaxTree;
 using LexicalAnalysis;
 using SemanticAnalysis;
 using SyntaxAnalysis;
@@ -24,14 +24,8 @@ namespace tc
 
         private static void Compile (IList<string> args)
         {
-            //combine multiple source files
-            var source = new StringBuilder();
-
-            foreach (var file in args)
-                source.Append(File.ReadAllText(file));
-
             var scan = new Scanner();
-            scan.SetSource(source.ToString(), 0);
+            scan.SetSource(GetSource(args), 0);
 
             var parser = new Parser(scan);
             if (!parser.Parse())
@@ -43,19 +37,38 @@ namespace tc
             var root = parser.SyntaxTreeRoot;
             Console.WriteLine(root.Print(0));
 
+            RunSemanticPasses(root);
+            GenerateIntermediateCode(args[0], root);
+            
+            Console.Read();
+        }
+
+        private static string GetSource(IEnumerable<string> args)
+        {
+            //combine multiple source files
+            var source = new StringBuilder();
+
+            foreach (var file in args)
+                source.Append(File.ReadAllText(file));
+            return source.ToString();
+        }
+
+        private static void RunSemanticPasses(Node root)
+        {
             var mgr = new ScopeManager();
 
             var first = new FirstPass(root, mgr);
             var second = new SecondPass(root, mgr);
             first.Run();
             second.Run();
+        }
 
-            var asmName = args[0].Substring(args[0].LastIndexOf("\\", StringComparison.Ordinal) + 1).Replace(".tn", "");
+        private static void GenerateIntermediateCode(string sourceFile, Node root)
+        {
+            var asmName = sourceFile.Substring(sourceFile.LastIndexOf("\\", StringComparison.Ordinal) + 1).Replace(".tn", "");
             var cg = new CodeGenerator(asmName);
             cg.Generate(root);
             cg.WriteAssembly();
-            
-            Console.Read();
         }
 
         private static void ShowUsage ()

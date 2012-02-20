@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ILGen.trancheTypes
 {
-    class Bond
+    public class Bond
     {
     }
 }

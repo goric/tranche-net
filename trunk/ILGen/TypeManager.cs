@@ -18,6 +18,9 @@ namespace ILGen
         {
             TypeBuilderMap = new Dictionary<string, TypeBuilderInfo>();
             Module = module;
+
+            AddInternalClass("CollateralItem");
+            AddInternalClass("Bond");
         }
 
         public void CreateAllTypes ()
@@ -38,27 +41,36 @@ namespace ILGen
 
         public void AddField(string typeName, Assign n)
         {
+            var info = TypeBuilderMap[typeName];
+            if (info.FieldMap.ContainsKey(n.Name)) return;
+
             var flags = Enum.GetNames(typeof (InternalTypes)).Contains(n.Name)
                             ? FieldAttributes.Public | FieldAttributes.Static
                             : FieldAttributes.Public;
-            TypeBuilderInfo info = TypeBuilderMap[typeName];
-            FieldBuilder fieldBuilder = info.Builder.DefineField(n.Name, LookupCilType(n.InternalType), flags);
+            
+            var fieldBuilder = info.Builder.DefineField(n.Name, LookupCilType(n.InternalType), flags);
             info.FieldMap.Add(n.Name, fieldBuilder);
+        }
+        public void AddInstanceField(string typeName, string fieldName, Type type)
+        {
+            var info = TypeBuilderMap[typeName];
+            var fieldBuilder = info.Builder.DefineField(fieldName, type, FieldAttributes.Public);
+            info.FieldMap.Add(fieldName, fieldBuilder);
         }
 
         public void AddCtor(string typeName, DeclarationMethod n)
         {
-            TypeBuilderInfo info = TypeBuilderMap[typeName];
-            TypeFunction function = n.Type as TypeFunction;
+            var info = TypeBuilderMap[typeName];
+            var function = n.Type as TypeFunction;
 
             //simulation is the entry point, must be static
             var attributes = n.Name.Equals("Simulation", StringComparison.OrdinalIgnoreCase)
                                 ? MethodAttributes.Public | MethodAttributes.Static
                                 : MethodAttributes.Public;
 
-            ConstructorBuilder builderObj = info.Builder.DefineConstructor(attributes, CallingConventions.Standard, ArgumentTypes(function));
-
-            info.ConstructorBuilder = new ConstructorBuilderInfo(builderObj, BuildFormalMap(n.Descriptor.Formals));
+            var builderObj = info.Builder.DefineConstructor(attributes, CallingConventions.Standard, ArgumentTypes(function));
+            var formals = n.Descriptor == null ? new List<FormalDescriptor>() : n.Descriptor.Formals;
+            info.ConstructorBuilder = new ConstructorBuilderInfo(builderObj, BuildFormalMap(formals));
         }
 
         public void AddMethod (string typeName, DeclarationMethod n)
@@ -127,7 +139,16 @@ namespace ILGen
 
         private Type[] ArgumentTypes(TypeFunction f)
         {
-            return f.Formals.Values.Select(c => LookupCilType(c)).ToArray();
+            return f.Formals.Values.Select(LookupCilType).ToArray();
+        }
+
+        private void AddInternalClass(string name)
+        {
+            var decl = new DeclarationClass(name, new StatementList());
+            TypeBuilderMap.Add(name, new TypeBuilderInfo(decl, Module));
+            var entry = TypeBuilderMap[name];
+            var builderObj = entry.Builder.DefineDefaultConstructor(MethodAttributes.Public);            
+            entry.ConstructorBuilder = new ConstructorBuilderInfo(builderObj);
         }
     }
 }

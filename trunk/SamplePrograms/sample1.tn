@@ -115,6 +115,7 @@
 
 		Required.
 	*/
-	print(Settings.OutputFile);
-	
+	println(Settings.OutputFile);
+	println(Deal.Name);
+	println(Deal.CutoffDate);
 }

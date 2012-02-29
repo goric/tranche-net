@@ -25,7 +25,7 @@ namespace ILGen
         protected ILGenerator _gen;
         protected TypeManager _typeManager;
         protected TypeBuilderInfo _currentTypeBuilder;
-        protected BuilderInfo _currentMethodBuilder;
+        protected TypeBuilderInfo _parentType;
         protected Type _lastWalkedType;
 
         private readonly string _assemblyName;
@@ -75,11 +75,31 @@ namespace ILGen
             n.Securities.Visit(this);
             n.CreditPaymentRules.Visit(this);
             n.Simulation.Visit(this);
+
+            EmitRulesClass();
+        }
+
+        private void EmitRulesClass()
+        {
+            var funcType = typeof(List<>).MakeGenericType(typeof (Predicate<>).MakeGenericType(_moduleBuilder.GetType("Bond")));
+
+            var builder = _moduleBuilder.DefineType("PaymentRules", TypeAttributes.Public);
+            var ctor = builder.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard, Type.EmptyTypes);
+            var field = builder.DefineField("Preds", funcType, FieldAttributes.Public);
+
+            var listCtor = TypeBuilder.GetConstructor(funcType, typeof(List<>).GetConstructor(Type.EmptyTypes));
+
+            var gen = ctor.GetILGenerator();
+            gen.Emit(OpCodes.Ldarg_0);
+            gen.Emit(OpCodes.Newobj, listCtor);
+            gen.Emit(OpCodes.Stfld, field);
+            gen.Emit(OpCodes.Ret);
+
+            builder.CreateType();
         }
 
         public override void VisitSettings(Settings n) { HandleInternalType("Settings", n); }
         public override void VisitDeal(Deal n) { HandleInternalType("Deal", n); }
-        public override void VisitCreditPaymentRules(CreditPaymentRules n) { HandleInternalType("CreditPaymentRules", n); }
         public override void VisitSimulation(Simulation n) { HandleInternalType("Simulation", n); }
 
         public override void VisitCollateral(Collateral n)
@@ -100,6 +120,16 @@ namespace ILGen
             n.Statements.Visit(this);
             _gen.Emit(OpCodes.Ret);
         }
+        public override void VisitCreditPaymentRules(CreditPaymentRules n) 
+        {
+            SetupInternalClass(n, "CreditPaymentRules");
+
+            AddListMemberToInternalClass("CreditPaymentRules", "InterestRules", "Bond");
+            AddListMemberToInternalClass("CreditPaymentRules", "PrincipalRules", "Bond");
+
+            n.Statements.Visit(this);
+            _gen.Emit(OpCodes.Ret);
+        }
 
         private void HandleInternalType(string name, DeclarationClass n)
         {
@@ -109,25 +139,15 @@ namespace ILGen
             _gen.Emit(OpCodes.Ret);
         }
 
-        private void AddMemberToInternalClass(string className, string fieldName, string underlyingClassName)
-        {
-            var type = _moduleBuilder.GetType(underlyingClassName);
-
-            _internalListIndex = 0;
-            _typeManager.AddInstanceField(className, fieldName, type);
-            var info = _typeManager.GetBuilderInfo(className);
-            var field = info.FieldMap[fieldName];
-
-            var underlyingInfo = _typeManager.GetBuilderInfo(underlyingClassName);
-            _gen.Emit(OpCodes.Ldarg_0);
-            _gen.Emit(OpCodes.Newobj, underlyingInfo.ConstructorBuilder.Builder);
-            //_gen.Emit(OpCodes.Newobj, type.GetConstructor(Type.EmptyTypes));
-            _gen.Emit(OpCodes.Stfld, field);
-        }
         private void AddListMemberToInternalClass(string className, string fieldName, string underlyingClassName)
         {
             var type = _moduleBuilder.GetType(underlyingClassName);
-            var listType = typeof(List<>).MakeGenericType(type);
+            AddListMemberToInternalClass(className, fieldName, type);
+        }
+
+        private void AddListMemberToInternalClass(string className, string fieldName, Type underlyingType)
+        {
+            var listType = typeof(List<>).MakeGenericType(underlyingType);
 
             _internalListIndex = 0;
             _typeManager.AddInstanceField(className, fieldName, listType);
@@ -167,20 +187,21 @@ namespace ILGen
         {
             var collatType = _moduleBuilder.GetType("CollateralItem");
             var ctor = _typeManager.GetBuilderInfo("CollateralItem").ConstructorBuilder.Builder;
-            //new up a tranchetypes.CollateralItem
+            
+            //new up a CollateralItem
             _gen.DeclareLocal(collatType);
-            _gen.Emit(OpCodes.Call, ctor);
+            _gen.Emit(OpCodes.Newobj, ctor);
             _gen.Emit(OpCodes.Stloc, _internalListIndex);
 
-            SetCurrentType("CollateralItem");
+            SetCurrentType("CollateralItem", "Collateral");
             n.Statements.Visit(this);
-            SetCurrentType("Collateral");
+            SetCurrentType("Collateral", null);
 
             // add current item to the list member variable
             _gen.Emit(OpCodes.Ldarg_0);
             _gen.Emit(OpCodes.Ldfld, _typeManager.GetBuilderInfo(_currentType).FieldMap["CollateralItems"]);
             _gen.Emit(OpCodes.Ldloc, _internalListIndex);
-            _gen.Emit(OpCodes.Callvirt, typeof(List<trancheTypes.CollateralItem>).GetMethod("Add"));
+            _gen.Emit(OpCodes.Callvirt, typeof(List<>).GetMethod("Add"));
 
             _internalListIndex++;
 
@@ -220,7 +241,7 @@ namespace ILGen
             _lastWalkedType = field.FieldType;
 
             //either have to load the field if getting, or store it if setting
-            // depends on who called me, assignment or dereference
+            // depends on why we're dereferencing, to read or write
             var shouldbeStatic = Enum.GetNames(typeof(InternalTypes)).Contains(field.Name);
             if (!n.IsLeftHandSide)
                 _gen.Emit(shouldbeStatic ? OpCodes.Ldsfld : OpCodes.Ldfld, field);
@@ -235,7 +256,11 @@ namespace ILGen
 
             if(!shouldbeStatic)
             {
-                _gen.Emit(OpCodes.Ldarg_0); //this.
+                //ldarg or ldloc?
+                if(IsSubClass(_currentTypeBuilder))
+                    _gen.Emit(OpCodes.Ldloc, _internalListIndex);
+                else
+                    _gen.Emit(OpCodes.Ldarg_0);
 
                 if(n.IsLeftHandSide)
                     _assignmentCallback = gen => gen.Emit(OpCodes.Stfld, field);
@@ -356,10 +381,16 @@ namespace ILGen
             _assignmentCallback = null;
         }
 
-        private void SetCurrentType(string name)
+        private void SetCurrentType(string name, string parent)
         {
             _currentType = name;
             _currentTypeBuilder = _typeManager.GetBuilderInfo(name);
+            _parentType = string.IsNullOrWhiteSpace(parent) ? null : _typeManager.GetBuilderInfo(parent);
+        }
+
+        private bool IsSubClass(TypeBuilderInfo b)
+        {
+            return new[] { "CollateralItem", "Bond", "InterestRules","PrincipalRules" }.Contains(b.Name);
         }
 
         #endregion

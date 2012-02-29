@@ -54,15 +54,6 @@
     <Compile Include="trancheMethods\InternalMethod.cs" />
     <Compile Include="trancheMethods\InternalMethodManager.cs" />
     <Compile Include="trancheMethods\IO\Print.cs" />
-    <Compile Include="trancheTypes\Bond.cs" />
-    <Compile Include="trancheTypes\CreditPaymentRules.cs" />
-    <Compile Include="trancheTypes\Deal.cs" />
-    <Compile Include="trancheTypes\List.cs" />
-    <Compile Include="trancheTypes\CollateralItem.cs" />
-    <Compile Include="trancheTypes\PaySched.cs" />
-    <Compile Include="trancheTypes\RateSched.cs" />
-    <Compile Include="trancheTypes\Set.cs" />
-    <Compile Include="trancheTypes\Settings.cs" />
     <Compile Include="TypeBuilderInfo.cs" />
     <Compile Include="TypeManager.cs" />
   </ItemGroup>

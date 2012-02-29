@@ -19,11 +19,6 @@ namespace SemanticAnalysis
             IsBranch = isBranch;
         }
 
-        public ICollection<Block> ChildBlocks()
-        {
-            return _childBlocks.AsReadOnly();
-        }
-
         public void AddBlock(Block b)
         {
             b.Parent = this;

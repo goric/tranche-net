@@ -1,5 +1,4 @@
-﻿using AbstractSyntaxTree.InternalTypes;
-
+﻿
 namespace AbstractSyntaxTree
 {
     public class Prog : Node

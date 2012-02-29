@@ -85,7 +85,6 @@
     <Compile Include="Statements\Statement.cs" />
     <Compile Include="Statements\StatementExpression.cs" />
     <Compile Include="Statements\StatementList.cs" />
-    <Compile Include="Statements\StatementVariable.cs" />
     <Compile Include="Literals\StringLiteral.cs" />
     <Compile Include="Visitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

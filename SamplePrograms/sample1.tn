@@ -96,7 +96,7 @@
 {
 	.Interest
 	{
-		-> Class="A-2" or Class="A-3" /* denotes these receive interest payments equally */
+		/* -> Class="A-2" or Class="A-3"  denotes these receive interest payments equally */
 		-> Class="X"
 	}
 	.Principal

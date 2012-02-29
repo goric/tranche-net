@@ -26,14 +26,9 @@ namespace SemanticAnalysis
             return old;
         }
 
-        public void RestoreScope (Scope s)
+        public ClassDescriptor AddClass (string name, InternalType t)
         {
-            CurrentScope = s;
-        }
-
-        public ClassDescriptor AddClass (string name, InternalType t, ClassDescriptor parent = null)
-        {
-            var cd = new ClassDescriptor(t, parent, name, CurrentScope);
+            var cd = new ClassDescriptor(t, name, CurrentScope);
             CurrentScope.Descriptors.Add(name, cd);
             return cd;
         }
@@ -63,22 +58,20 @@ namespace SemanticAnalysis
         {
             return Find(name, pred, CurrentScope);
         }
-        public Descriptor Find(string name, Func<Descriptor, bool> pred, Scope s, bool currentOnly = false)
+
+        private static Descriptor Find(string name, Func<Descriptor, bool> pred, Scope s, bool currentOnly = false)
         {
-            Scope checkScope = s;
+            var checkScope = s;
 
             while (checkScope != null)
             {
                 if (checkScope.HasSymbol(name))
                 {
-                    Descriptor d = checkScope.Descriptors[name];
+                    var d = checkScope.Descriptors[name];
                     if (pred(d))
                         return d;
                 }
-                if (!currentOnly)
-                    checkScope = checkScope.Parent;
-                else
-                    checkScope = null;
+                checkScope = !currentOnly ? checkScope.Parent : null;
             }
 
             return null;

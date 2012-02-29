@@ -1,4 +1,5 @@
-﻿
+﻿using SemanticAnalysis;
+
 namespace AbstractSyntaxTree.InternalTypes
 {
     public class PrincipalRules : StatementList

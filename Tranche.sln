@@ -22,6 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SamplePrograms", "SamplePro
 		SamplePrograms\emptyShell.tn = SamplePrograms\emptyShell.tn
 		SamplePrograms\helloWorld.tn = SamplePrograms\helloWorld.tn
 		SamplePrograms\sample1.tn = SamplePrograms\sample1.tn
+		SamplePrograms\sample2.tn = SamplePrograms\sample2.tn
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbstractSyntaxTree", "AbstractSyntaxTree\AbstractSyntaxTree.csproj", "{3FB5701D-451C-452B-806C-860F7338D23C}"

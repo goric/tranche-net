@@ -105,7 +105,7 @@ namespace tc
             n.InternalType = _lastSeenType = new TypeReal();
         }
 
-        public InternalType CheckSubTree(Node root)
+        private InternalType CheckSubTree(Node root)
         {
             _lastSeenType = null;
             root.Visit(this);

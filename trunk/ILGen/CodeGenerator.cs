@@ -135,7 +135,9 @@ namespace ILGen
         {
             SetupInternalClass(n, name);
 
-            n.Statements.Visit(this);
+            if(n.Statements != null)
+                n.Statements.Visit(this);
+
             _gen.Emit(OpCodes.Ret);
         }
 
@@ -194,18 +196,23 @@ namespace ILGen
             _gen.Emit(OpCodes.Stloc, _internalListIndex);
 
             SetCurrentType("CollateralItem", "Collateral");
-            n.Statements.Visit(this);
+            if(n.Statements != null)
+                n.Statements.Visit(this);
             SetCurrentType("Collateral", null);
 
             // add current item to the list member variable
             _gen.Emit(OpCodes.Ldarg_0);
             _gen.Emit(OpCodes.Ldfld, _typeManager.GetBuilderInfo(_currentType).FieldMap["CollateralItems"]);
             _gen.Emit(OpCodes.Ldloc, _internalListIndex);
-            _gen.Emit(OpCodes.Callvirt, typeof(List<>).GetMethod("Add"));
+
+            //get the generic add method and call it
+            var listType = typeof(List<>).MakeGenericType(_moduleBuilder.GetType("CollateralItem"));
+            var method = TypeBuilder.GetMethod(listType, typeof(List<>).GetMethod("Add"));
+            _gen.Emit(OpCodes.Callvirt, method);
 
             _internalListIndex++;
 
-            if(!n.Tail.IsEmpty)
+            if(n.Tail != null && !n.Tail.IsEmpty)
                 n.Tail.Visit(this);
         }
 
@@ -256,7 +263,6 @@ namespace ILGen
 
             if(!shouldbeStatic)
             {
-                //ldarg or ldloc?
                 if(IsSubClass(_currentTypeBuilder))
                     _gen.Emit(OpCodes.Ldloc, _internalListIndex);
                 else
@@ -295,7 +301,7 @@ namespace ILGen
 
         public override void VisitRealLiteral(RealLiteral n)
         {
-            _gen.Emit(OpCodes.Ldc_R4, n.Value);
+            _gen.Emit(OpCodes.Ldc_R8, n.Value);
             _lastWalkedType = typeof(double);
         }
 

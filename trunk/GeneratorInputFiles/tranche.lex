@@ -8,11 +8,10 @@ NewLine     \r|\n|\r\n
 WhiteSpace  {NewLine}|\t\f
 Integer		0|[1-9][0-9,]*
 Exponent	[eE]("+"|"-")?{Integer}
-Real		{Integer}("."{Integer})?{Exponent}?
+Real		{Integer}("."0*{Integer})?{Exponent}?
 Comment		(\/\*)([^\*]*|\*+[^\/\*])*(\*+\/)
 Identifier	[a-zA-Z][a-zA-Z0-9]*
 String		\"(\\.|[^"])*\"
-Character	'\\u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]'
 
 %%
 
@@ -65,7 +64,6 @@ Character	'\\u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]'
 "real"              { yylval.Token = new Token(Tokens.TREAL, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.TREAL); return (int) Tokens.TREAL; }
 "string"			{ yylval.Token = new Token(Tokens.TSTRING, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.TSTRING); return (int) Tokens.TSTRING; }
 "flag"             	{ yylval.Token = new Token(Tokens.TBOOL, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.TBOOL); return (int) Tokens.TBOOL; }
-"char"             	{ yylval.Token = new Token(Tokens.TCHAR, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.TCHAR); return (int) Tokens.TCHAR; }
 "set"				{ yylval.Token = new Token(Tokens.TSET, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.TSET); return (int) Tokens.TSET; }
 "list"				{ yylval.Token = new Token(Tokens.TLIST, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.TLIST); return (int) Tokens.TLIST; }
 "file"				{ yylval.Token = new Token(Tokens.TFILE, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.TFILE); return (int) Tokens.TFILE; }
@@ -83,7 +81,6 @@ Character	'\\u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]'
 {Integer}	 		{ yylval.Token = new Token(Tokens.LITERAL_INT, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.LITERAL_INT); return (int) Tokens.LITERAL_INT; }
 {Real}	 			{ yylval.Token = new Token(Tokens.LITERAL_REAL, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.LITERAL_REAL); return (int) Tokens.LITERAL_REAL; }
 {String}			{ yylval.Token = new Token(Tokens.LITERAL_STRING, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.LITERAL_STRING); return (int) Tokens.LITERAL_STRING; }
-{Character}			{ yylval.Token = new Token(Tokens.LITERAL_CHAR, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.LITERAL_CHAR); return (int) Tokens.LITERAL_CHAR; }
 {Identifier}		{ yylval.Token = new Token(Tokens.IDENTIFIER, yytext); if(isDebug) Console.WriteLine(Tokens.IDENTIFIER); return (int) Tokens.IDENTIFIER; }
 {NewLine}			{ /* NewLine - Do Nothing */ }
 {WhiteSpace}		{ /* Whitespace - Do Nothing */ }
@@ -93,7 +90,7 @@ Character	'\\u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]'
 
 %%
 
-public bool isDebug = false;
+public bool isDebug = true;
 
 public override void yyerror(string format, params object[] args)
 {

@@ -22,7 +22,7 @@
 		Maturity: "6/1/2015"
 		PropertyType: "Office"
 		City: "New York"
-		State: "NY"
+		State: "NY" 
 	}
 	.CollateralItem
 	{
@@ -96,12 +96,12 @@
 {
 	.Interest
 	{
-		/* -> Class="A-2" or Class="A-3"  denotes these receive interest payments equally */
+		-> Class="A-2" or Class="A-3"  /*denotes these receive interest payments equally */
 		-> Class="X"
 	}
 	.Principal
 	{
-		/* In this example, class X is interest-only */
+		/*In this example, class X is interest-only */
 		-> CUSIP="05947UR42"
 		-> Class="A-3"
 	}

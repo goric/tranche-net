@@ -52,8 +52,10 @@ namespace tc
             var classScope = _mgr.PushScope(string.Format("class {0}", _currentClass.ClassName));
 
             _currentClass.Descriptor = (ClassDescriptor)_mgr.Find(n.Name, p => p is ClassDescriptor);
-
-            CheckSubTree(n.Statements);
+            
+            if(n.Statements != null)
+                CheckSubTree(n.Statements);
+            
             n.Type = _currentClass;
 
             _currentClass.Descriptor.Scope = _currentClass.Scope = classScope;
@@ -64,10 +66,13 @@ namespace tc
         public override void VisitCollateralItem(CollateralItem n)
         {
             _mgr.PushScope(string.Format("CollateralItem{0}", _itemIncrementer++));
-            n.Statements.Visit(this);
+            
+            if(n.Statements != null)
+                n.Statements.Visit(this);
+            
             _mgr.PopScope();
 
-            if (!n.Tail.IsEmpty)
+            if (n.Tail != null && !n.Tail.IsEmpty)
                 n.Tail.Visit(this);
         }
 

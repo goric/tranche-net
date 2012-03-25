@@ -90,7 +90,7 @@ String		\"(\\.|[^"])*\"
 
 %%
 
-public bool isDebug = true;
+public bool isDebug = false;
 
 public override void yyerror(string format, params object[] args)
 {

@@ -20,13 +20,12 @@ namespace ILGen
     }
     public class CodeGenerator : Visitor
     {
-        protected AssemblyBuilder _assemblyBuilder;
-        protected ModuleBuilder _moduleBuilder;
-        protected ILGenerator _gen;
-        protected TypeManager _typeManager;
-        protected TypeBuilderInfo _currentTypeBuilder;
-        protected TypeBuilderInfo _parentType;
-        protected Type _lastWalkedType;
+        private AssemblyBuilder _assemblyBuilder;
+        private ModuleBuilder _moduleBuilder;
+        private ILGenerator _gen;
+        private TypeManager _typeManager;
+        private TypeBuilderInfo _currentTypeBuilder;
+        private Type _lastWalkedType;
 
         private readonly string _assemblyName;
         private string _currentType;
@@ -195,10 +194,10 @@ namespace ILGen
             _gen.Emit(OpCodes.Newobj, ctor);
             _gen.Emit(OpCodes.Stloc, _internalListIndex);
 
-            SetCurrentType("CollateralItem", "Collateral");
+            SetCurrentType("CollateralItem");
             if(n.Statements != null)
                 n.Statements.Visit(this);
-            SetCurrentType("Collateral", null);
+            SetCurrentType("Collateral");
 
             // add current item to the list member variable
             _gen.Emit(OpCodes.Ldarg_0);
@@ -387,11 +386,10 @@ namespace ILGen
             _assignmentCallback = null;
         }
 
-        private void SetCurrentType(string name, string parent)
+        private void SetCurrentType(string name)
         {
             _currentType = name;
             _currentTypeBuilder = _typeManager.GetBuilderInfo(name);
-            _parentType = string.IsNullOrWhiteSpace(parent) ? null : _typeManager.GetBuilderInfo(parent);
         }
 
         private bool IsSubClass(TypeBuilderInfo b)

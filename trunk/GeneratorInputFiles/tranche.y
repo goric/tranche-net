@@ -88,7 +88,7 @@ statementList	:										{ $$ = new StatementList(); $$.Location = CurrentLocati
 				;
 
 statement		: IDENTIFIER ASSIGN expression			{ $$ = new Assign(new Identifier(CurrentLocationSpan, $1.Value), $3); $$.Location = CurrentLocationSpan; }
-				| IDENTIFIER ASSIGN instantiation		{  }
+				| IDENTIFIER ASSIGN instantiation		{ $$ = new Assign(new Identifier(CurrentLocationSpan, $1.Value), $3); $$.Location = CurrentLocationSpan; }
 				| IDENTIFIER ASSIGN LPAREN IDENTIFIER RPAREN expression { $$ = new Assign(new Identifier(CurrentLocationSpan, $1.Value), new Qualifier($4.Value, $6)); $$.Location = CurrentLocationSpan; }
 				| LBRACE statementList RBRACE			{ $$ = new Block($2); $$.Location = CurrentLocationSpan; }
 				| loop									{ $$ = $1; $$.Location = CurrentLocationSpan; }
@@ -98,8 +98,8 @@ statement		: IDENTIFIER ASSIGN expression			{ $$ = new Assign(new Identifier(Cur
 				| FILTER IDENTIFIER IDENTIFIER FIRST	{ $$ = new Filter(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $3.Value), "first"); $$.Location = CurrentLocationSpan; }
 				| FILTER IDENTIFIER IDENTIFIER LAST		{ $$ = new Filter(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $3.Value), "last"); $$.Location = CurrentLocationSpan; }
 				| FILTER IDENTIFIER IDENTIFIER expression	{ $$ = new Filter(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $3.Value), $4); $$.Location = CurrentLocationSpan; }
-				| AGGREGATE IDENTIFIER expression		{  }
-				| PIPE expression PIPE					{  }
+				| AGGREGATE IDENTIFIER expression		{ $$ = new Aggregate(new Identifier(CurrentLocationSpan, $2.Value), $3); $$.Location = CurrentLocationSpan; }
+				| PIPE expression PIPE					{ $$ = new RuleType($2); $$.Location = CurrentLocationSpan; }
 				;
 
 collListOpt		:															{ $$ = new CollateralItem(); $$.Location = CurrentLocationSpan; }

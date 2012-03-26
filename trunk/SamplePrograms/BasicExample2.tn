@@ -1,0 +1,108 @@
+.Deal
+{
+	Name: "BACM 2005-3"
+	CutoffDate: (date)"7/1/2005"
+}
+
+
+.Collateral
+{
+	.CollateralItem
+	{
+		ID: 0
+		PropertyName: "Woolworth Building"
+		OriginalBalance: 200,000,000
+		CurrentBalance: 200,000,000 
+		InterestRate: 0.05191
+		Maturity: (date)"6/1/2015"
+		PropertyType: "Office"
+		City: "New York"
+		State: "NY" 
+	}
+	.CollateralItem
+	{
+		ID: 1
+		PropertyName: "Ridgedale Center"
+		OriginalBalance: 168,632,029 
+		CurrentBalance: 168,632,029 
+		InterestRate: 0.04861
+		Maturity: (date)"9/30/2016"
+		PropertyType: "Retail"
+		City: "Minnetonka"
+		State: "MN"
+	}
+	.CollateralItem
+	{
+		ID: 2
+		PropertyName: "Marley Station"
+		OriginalBalance: 114,400,000 
+		CurrentBalance: 100,000,000 
+		InterestRate: 0.04891
+		Maturity: (date)"7/1/12"
+		PropertyType: "Retail"
+		City: "Glen Burnie"
+		State: "MD"
+	}
+	.CollateralItem
+	{
+		ID: 3
+		PropertyName: "Fiesta Mall"
+		OriginalBalance: 84,000,000
+		CurrentBalance: 78,000,000
+		InterestRate: 0.04875
+		Maturity: (date)"1/1/2015"
+		PropertyType: "Retail"
+		City: "Mesa"
+		State: "AZ"
+	}
+}
+
+
+.Securities
+{
+	.Bond
+	{
+		ID: 0
+		CUSIP: "05947UR42"
+		Class: "A-2"
+		OriginalBalance: 505,650,000 
+		CurrentBalance: 125,483,169 
+	}
+	.Bond
+	{
+		ID: 1
+		CUSIP: "05947UR59"
+		Class: "A-3"
+		OriginalBalance: 279,216,000 
+		CurrentBalance: 279,216,000 
+	}
+	.Bond
+	{
+		ID: 2
+		CUSIP: "05947US41"
+		Class: "X"
+		OriginalBalance: 24,312,000
+		CurrentBalance: 24,312,000
+	}
+}
+
+
+.CreditPaymentRules
+{
+	.Interest
+	{
+		-> Class="A-2" or Class="A-3"
+		-> Class="X"
+	}
+	.Principal
+	{
+		-> CUSIP="05947UR42"
+		-> Class="A-3"
+	}
+}
+
+
+.Simulation
+{
+	
+}

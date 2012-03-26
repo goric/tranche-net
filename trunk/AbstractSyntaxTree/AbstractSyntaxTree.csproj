@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Aggregate.cs" />
     <Compile Include="Expressions\Arithmetic\Decrement.cs" />
     <Compile Include="Expressions\Arithmetic\Divide.cs" />
     <Compile Include="Expressions\Arithmetic\Exp.cs" />
@@ -62,6 +63,7 @@
     <Compile Include="Expressions\DereferenceField.cs" />
     <Compile Include="Expressions\InstantiateClass.cs" />
     <Compile Include="Expressions\LValue.cs" />
+    <Compile Include="RuleType.cs" />
     <Compile Include="Statements\Assign.cs" />
     <Compile Include="Statements\Block.cs" />
     <Compile Include="Literals\BooleanLiteral.cs" />

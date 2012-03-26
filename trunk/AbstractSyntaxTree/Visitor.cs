@@ -69,6 +69,8 @@ namespace AbstractSyntaxTree
         public virtual void VisitQualifier(Qualifier n) { }
         public virtual void VisitCons(Cons n) { }
         public virtual void VisitFilter(Filter n) { }
+        public virtual void VisitAggregate(Aggregate n) { }
+        public virtual void VisitRuleType(RuleType n) { }
 
         public virtual void VisitStatementList (StatementList n)
         {

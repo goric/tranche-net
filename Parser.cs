@@ -4,7 +4,7 @@
 
 // GPPG version 1.4.0
 // Machine:  VOSTRO
-// DateTime: 3/26/2012 12:21:04 PM
+// DateTime: 3/26/2012 12:32:52 PM
 // UserName: Tim
 // Input file <..\GeneratorInputFiles\tranche.y>
 
@@ -408,7 +408,7 @@ internal class Parser: ShiftReduceParser<SemanticValue, LexLocation>
 { CurrentSemanticValue.Statement = new Assign(new Identifier(CurrentLocationSpan, ValueStack[ValueStack.Depth-3].Token.Value), ValueStack[ValueStack.Depth-1].Expression); CurrentSemanticValue.Statement.Location = CurrentLocationSpan; }
         break;
       case 24: // statement -> IDENTIFIER, ASSIGN, instantiation
-{  }
+{ CurrentSemanticValue.Statement = new Assign(new Identifier(CurrentLocationSpan, ValueStack[ValueStack.Depth-3].Token.Value), ValueStack[ValueStack.Depth-1].Statement); CurrentSemanticValue.Statement.Location = CurrentLocationSpan; }
         break;
       case 25: // statement -> IDENTIFIER, ASSIGN, LPAREN, IDENTIFIER, RPAREN, expression
 { CurrentSemanticValue.Statement = new Assign(new Identifier(CurrentLocationSpan, ValueStack[ValueStack.Depth-6].Token.Value), new Qualifier(ValueStack[ValueStack.Depth-3].Token.Value, ValueStack[ValueStack.Depth-1].Expression)); CurrentSemanticValue.Statement.Location = CurrentLocationSpan; }
@@ -438,10 +438,10 @@ internal class Parser: ShiftReduceParser<SemanticValue, LexLocation>
 { CurrentSemanticValue.Statement = new Filter(new Identifier(CurrentLocationSpan, ValueStack[ValueStack.Depth-3].Token.Value), new Identifier(CurrentLocationSpan, ValueStack[ValueStack.Depth-2].Token.Value), ValueStack[ValueStack.Depth-1].Expression); CurrentSemanticValue.Statement.Location = CurrentLocationSpan; }
         break;
       case 34: // statement -> AGGREGATE, IDENTIFIER, expression
-{  }
+{ CurrentSemanticValue.Statement = new Aggregate(new Identifier(CurrentLocationSpan, ValueStack[ValueStack.Depth-2].Token.Value), ValueStack[ValueStack.Depth-1].Expression); CurrentSemanticValue.Statement.Location = CurrentLocationSpan; }
         break;
       case 35: // statement -> PIPE, expression, PIPE
-{  }
+{ CurrentSemanticValue.Statement = new RuleType(ValueStack[ValueStack.Depth-2].Expression); CurrentSemanticValue.Statement.Location = CurrentLocationSpan; }
         break;
       case 36: // collListOpt -> /* empty */
 { CurrentSemanticValue.CollateralItem = new CollateralItem(); CurrentSemanticValue.CollateralItem.Location = CurrentLocationSpan; }

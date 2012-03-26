@@ -20,6 +20,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SamplePrograms", "SamplePrograms", "{4E548D22-A91A-4475-A8A6-9A36D60729A8}"
 	ProjectSection(SolutionItems) = preProject
 		SamplePrograms\BasicExample.tn = SamplePrograms\BasicExample.tn
+		SamplePrograms\BasicExample2.tn = SamplePrograms\BasicExample2.tn
 		SamplePrograms\emptyShell.tn = SamplePrograms\emptyShell.tn
 		SamplePrograms\helloWorld.tn = SamplePrograms\helloWorld.tn
 		SamplePrograms\sample1.tn = SamplePrograms\sample1.tn
@@ -29,6 +30,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbstractSyntaxTree", "AbstractSyntaxTree\AbstractSyntaxTree.csproj", "{3FB5701D-451C-452B-806C-860F7338D23C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SemanticAnalysis", "SemanticAnalysis\SemanticAnalysis.csproj", "{7F5D0551-17D7-4D74-8A94-E1F6799707EB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrancheLib", "TrancheLib\TrancheLib.csproj", "{BD712455-E0CE-447E-90A0-58A998BF4028}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -80,6 +83,16 @@ Global
 		{7F5D0551-17D7-4D74-8A94-E1F6799707EB}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{7F5D0551-17D7-4D74-8A94-E1F6799707EB}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{7F5D0551-17D7-4D74-8A94-E1F6799707EB}.Release|x86.ActiveCfg = Release|Any CPU
+		{BD712455-E0CE-447E-90A0-58A998BF4028}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD712455-E0CE-447E-90A0-58A998BF4028}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD712455-E0CE-447E-90A0-58A998BF4028}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{BD712455-E0CE-447E-90A0-58A998BF4028}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{BD712455-E0CE-447E-90A0-58A998BF4028}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BD712455-E0CE-447E-90A0-58A998BF4028}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD712455-E0CE-447E-90A0-58A998BF4028}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD712455-E0CE-447E-90A0-58A998BF4028}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{BD712455-E0CE-447E-90A0-58A998BF4028}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{BD712455-E0CE-447E-90A0-58A998BF4028}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

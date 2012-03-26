@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{F50AB0A3-093D-40FF-8718-E4488F6C3FC7}</ProjectGuid>
+    <ProjectGuid>{BD712455-E0CE-447E-90A0-58A998BF4028}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ILGen</RootNamespace>
-    <AssemblyName>ILGen</AssemblyName>
+    <RootNamespace>TrancheLib</RootNamespace>
+    <AssemblyName>TrancheLib</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -31,10 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="QUT.ShiftReduceParser, Version=1.4.0.0, Culture=neutral, PublicKeyToken=402396ef6102baec, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Dependencies\QUT.ShiftReduceParser.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -44,32 +40,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArgumentInfo.cs" />
-    <Compile Include="BuilderInfo.cs" />
-    <Compile Include="CodeGenerator.cs" />
-    <Compile Include="ConstructorBuilderInfo.cs" />
-    <Compile Include="LocalBuilderInfo.cs" />
-    <Compile Include="MethodBuilderInfo.cs" />
+    <Compile Include="Aggregate.cs" />
+    <Compile Include="DoubleSet.cs" />
+    <Compile Include="Filter.cs" />
+    <Compile Include="IntSet.cs" />
+    <Compile Include="Rule.cs" />
+    <Compile Include="RuleSet.cs" />
+    <Compile Include="Set.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="trancheMethods\InternalMethod.cs" />
-    <Compile Include="trancheMethods\InternalMethodManager.cs" />
-    <Compile Include="trancheMethods\Print.cs" />
-    <Compile Include="trancheMethods\Convert.cs" />
-    <Compile Include="trancheMethods\Today.cs" />
-    <Compile Include="TypeBuilderInfo.cs" />
-    <Compile Include="TypeManager.cs" />
+    <Compile Include="TimeSeries.cs" />
+    <Compile Include="TimeSeries2.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AbstractSyntaxTree\AbstractSyntaxTree.csproj">
-      <Project>{3FB5701D-451C-452B-806C-860F7338D23C}</Project>
-      <Name>AbstractSyntaxTree</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SemanticAnalysis\SemanticAnalysis.csproj">
-      <Project>{7F5D0551-17D7-4D74-8A94-E1F6799707EB}</Project>
-      <Name>SemanticAnalysis</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

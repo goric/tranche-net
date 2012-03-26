@@ -68,6 +68,10 @@
       <Project>{7F5D0551-17D7-4D74-8A94-E1F6799707EB}</Project>
       <Name>SemanticAnalysis</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TrancheLib\TrancheLib.csproj">
+      <Project>{BD712455-E0CE-447E-90A0-58A998BF4028}</Project>
+      <Name>TrancheLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -7,10 +7,15 @@ namespace TrancheLib
         public Predicate<T1> Predicate { get; set; }
         public Func<T2, T3> Action { get; set; }
 
-        public Rule(Predicate<T1> pred, Func<T2,T3> action)
+        public Rule(Predicate<T1> pred, Func<T2,T3> action = null)
         {
             Predicate = pred;
             Action = action;
+        }
+
+        public void SetAction(Func<T2,T3> f)
+        {
+            Action = f;
         }
 
         public bool InvokePredicate(T1 item)
@@ -20,6 +25,9 @@ namespace TrancheLib
 
         public T3 InvokeAction(T2 item)
         {
+            if (Action == null)
+                throw new ApplicationException("Action is unititialized");
+
             return Action(item);
         }
     }

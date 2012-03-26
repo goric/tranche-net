@@ -76,6 +76,19 @@ namespace tc
                 n.Tail.Visit(this);
         }
 
+        public override void VisitBond(Bond n)
+        {
+            _mgr.PushScope(string.Format("Bond{0}", _itemIncrementer++));
+
+            if (n.Statements != null)
+                n.Statements.Visit(this);
+
+            _mgr.PopScope();
+
+            if (n.Tail != null && !n.Tail.IsEmpty)
+                n.Tail.Visit(this);
+        }
+
         public override void VisitStatementList(StatementList n)
         {
             if (n.IsEmpty) return;

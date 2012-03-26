@@ -1,7 +1,7 @@
 ﻿
 namespace AbstractSyntaxTree
 {
-    public class Filter : Expression
+    public class Filter : Statement
     {
         public Identifier SetName { get; set; }
         public Identifier RuleInput { get; set; }

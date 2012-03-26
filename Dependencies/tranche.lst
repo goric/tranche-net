@@ -4,7 +4,7 @@
 // ==========================================================================
 //  Version:  1.4.0
 //  Machine:  VOSTRO
-//  DateTime: 2/18/2012 2:59:34 PM
+//  DateTime: 3/26/2012 12:20:03 PM
 //  UserName: Tim
 // ==========================================================================
 
@@ -21,28 +21,29 @@
 %YYSTYPE SemanticValue
 
 /* Terminals */
-%token<Token> SETTINGS DEAL COLLATERAL COLLATERALITEM SECURITIES BOND CREDITPAYMENTRULES SIMULATION RULES
-%token<Token> RPAREN LBRACE RBRACE RBRACKET PBRACKET DOT DOTDOT COMMA IN TINT TREAL SEMI INTEREST
-%token<Token> TSTRING TBOOL TVOID TCHAR TFILE TSET TLIST FOR IF ELSE CLASS AUTOPROP PRINCIPAL RULE
-%token<Token> NEW RETURN TRUE FALSE LITERAL_INT LITERAL_REAL LITERAL_STRING LITERAL_CHAR IDENTIFIER
+%token<Token> SETTINGS DEAL COLLATERAL COLLATERALITEM SECURITIES BOND CREDITPAYMENTRULES INTEREST PRINCIPAL SIMULATION RULES
+%token<Token> UPTO DOWNTO TRUE FALSE AND OR WHERE AGGREGATE FILTER FIRST LAST WITH
+%token<Token> RULE PLUS MINUS TIMES DIVIDE SMALLER GREATER SMEQ GTEQ EQ NEQ ASSIGN NOT MOD 
+%token<Token> LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET PBRACKET INCREMENT DECREMENT EXP DOT COMMA CONS 
+%token<Token> ATPLUS ATMINUS ATTIMES ATDIV ATMOD ATEXP PIPE LITERAL_INT LITERAL_REAL LITERAL_STRING IDENTIFIER
 
 /* Precedence rules */
 %right ASSIGN
 %left OR AND INCREMENT DECREMENT EXP
 %left SMALLER GREATER SMEQ GTEQ EQ NEQ
 %left PLUS MINUS TIMES DIVIDE MOD
-%left UMINUS LPAREN NOT LBRACKET
-%nonassoc ELSE
+%left ATPLUS ATMINUS ATTIMES ATDIV ATMOD ATEXP
+%left LPAREN NOT LBRACKET
 
-/* Non-terminals, generic */
+/* Non-terminal types, generic */
 %type<Prog> program
 %type<StatementList> statementList 
-%type<Statement> statement 
-%type<Expression> expression literal compExpression lvalue
+%type<Statement> statement loop instantiation
+%type<Expression> expression literal compExpression lvalue basicExpression advExpression arithmetic
 %type<ExpressionList> onePlusActuals actuals boolListOpt
 
-/* Non-terminals, tranche-specific */
-%type<DeclarationClass> settingsOpt dealOpt collateralSection securitySection simulationSection secListOpt creditRulesOpt
+/* Non-terminal types, tranche-specific */
+%type<DeclarationClass> settingsOpt dealOpt collatSection securitySection simSection secListOpt creditRulesOpt
 %type<InternalRuleList> rulesListOpt 
 %type<CollateralItem> collListOpt
 %type<Bond> secListOpt
@@ -50,16 +51,16 @@
 %type<PrincipalRules> principalRules
 
 %%
-// Warning: NonTerminal symbol "lvalue" is unreachable
-// Error: NonTerminal symbol "lvalue" has no productions
+// Warning: NonTerminal symbol "advExpression" is unreachable
+// Error: NonTerminal symbol "advExpression" has no productions
 // Error: There are 1 non-terminating NonTerminal Symbols
-   //  {lvalue}
-// Warning: Terminating lvalue fixes the following size-1 NonTerminal set
-   // {lvalue}
-// ----------------------------------------------------------------------
+   //  {advExpression}
+// Warning: Terminating advExpression fixes the following size-1 NonTerminal set
+   // {advExpression}
+// -----------------------------------------------------------------------------
 
-/* Non-terminal types */
-program			: settingsOpt dealOpt collateralSection securitySection	creditRulesOpt simulationSection { $$ = new Prog($1, $2, $3, $4, $5, $6); SyntaxTreeRoot = $$; $$.Location = CurrentLocationSpan; }
+/* Non-terminal productions */
+program			: settingsOpt dealOpt collatSection securitySection	creditRulesOpt simSection { $$ = new Prog($1, $2, $3, $4, $5, $6); SyntaxTreeRoot = $$; $$.Location = CurrentLocationSpan; }
 				;
 
 settingsOpt		:										{ $$ = new Settings(); $$.Location = CurrentLocationSpan; }
@@ -70,27 +71,17 @@ dealOpt			:										{ $$ = new Deal(); $$.Location = CurrentLocationSpan; }
 				| DEAL LBRACE statementList RBRACE		{ $$ = new Deal($3); $$.Location = CurrentLocationSpan; }
 				;
 
-statementList	:										{ $$ = new StatementList(); $$.Location = CurrentLocationSpan; }
-				| statement statementList				{ $$ = new StatementList($1, $2); $$.Location = CurrentLocationSpan; }
+collatSection	: COLLATERAL LBRACE collListOpt RBRACE	{ $$ = new Collateral($3); $$.Location = CurrentLocationSpan; }
 				;
 
-statement		
-				/*| IDENTIFIER SEMI						{ $$ = new StatementVariable(CurrentLocationSpan, $1.Value); $$.Location = CurrentLocationSpan; }*/
-				: IDENTIFIER ASSIGN expression			{ $$ = new Assign(new Identifier(CurrentLocationSpan, $1.Value), $3); $$.Location = CurrentLocationSpan; }
-				| LBRACE statementList RBRACE			{ $$ = new Block($2); $$.Location = CurrentLocationSpan; }
-				| IF LPAREN expression RPAREN statement			{ $$ = new IfThen($3, $5); $$.Location = CurrentLocationSpan; }
-				/*| IF LPAREN expression RPAREN statement ELSE statement  { $$ = new IfThenElse($3, $5, $7); $$.Location = CurrentLocationSpan; }*/
-				| expression							{ $$ = new StatementExpression($1); $$.Location = CurrentLocationSpan; }
-				;
-
-collateralSection	: COLLATERAL LBRACE collListOpt RBRACE	{ $$ = new Collateral($3); $$.Location = CurrentLocationSpan; }
-					;
-
-securitySection : SECURITIES LBRACE secListOpt RBRACE		{ $$ = new Securities($3); $$.Location = CurrentLocationSpan; }
+securitySection : SECURITIES LBRACE secListOpt RBRACE	{ $$ = new Securities($3); $$.Location = CurrentLocationSpan; }
 				;
 
 creditRulesOpt	:																{ $$ = new CreditPaymentRules(); $$.Location = CurrentLocationSpan; }
 				| CREDITPAYMENTRULES LBRACE interestRules principalRules RBRACE	{ $$ = new CreditPaymentRules(new StatementList($3,$4)); $$.Location = CurrentLocationSpan; }
+				;
+
+simSection		: SIMULATION LBRACE statementList RBRACE	{ $$ = new Simulation($3); $$.Location = CurrentLocationSpan; }
 				;
 
 interestRules	:										{ $$ = new InterestRules(); $$.Location = CurrentLocationSpan; }
@@ -110,8 +101,24 @@ boolListOpt		: rulesListOpt							{ $$ = $1; $$.Location = CurrentLocationSpan; 
 				| AND compExpression boolListOpt		{ $$ = new InternalRuleListAnd($2, $3); $$.Location = CurrentLocationSpan; }
 				;
 
-simulationSection	: SIMULATION LBRACE statementList RBRACE	{ $$ = new Simulation($3); $$.Location = CurrentLocationSpan; }
-					;
+statementList	:										{ $$ = new StatementList(); $$.Location = CurrentLocationSpan; }
+				| statement statementList				{ $$ = new StatementList($1, $2); $$.Location = CurrentLocationSpan; }
+				;
+
+statement		: IDENTIFIER ASSIGN expression			{ $$ = new Assign(new Identifier(CurrentLocationSpan, $1.Value), $3); $$.Location = CurrentLocationSpan; }
+				| IDENTIFIER ASSIGN instantiation		{  }
+				| IDENTIFIER ASSIGN LPAREN IDENTIFIER RPAREN expression { $$ = new Assign(new Identifier(CurrentLocationSpan, $1.Value), new Qualifier($4.Value, $6)); $$.Location = CurrentLocationSpan; }
+				| LBRACE statementList RBRACE			{ $$ = new Block($2); $$.Location = CurrentLocationSpan; }
+				| loop									{ $$ = $1; $$.Location = CurrentLocationSpan; }
+				| expression							{ $$ = new StatementExpression($1); $$.Location = CurrentLocationSpan; }
+				| IDENTIFIER CONS literal				{ $$ = new Cons(new Identifier(CurrentLocationSpan, $1.Value), $3); $$.Location = CurrentLocationSpan; }
+				| IDENTIFIER CONS lvalue				{ $$ = new Cons(new Identifier(CurrentLocationSpan, $1.Value), $3); $$.Location = CurrentLocationSpan; }
+				| FILTER IDENTIFIER IDENTIFIER FIRST	{ $$ = new Filter(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $3.Value), "first"); $$.Location = CurrentLocationSpan; }
+				| FILTER IDENTIFIER IDENTIFIER LAST		{ $$ = new Filter(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $3.Value), "last"); $$.Location = CurrentLocationSpan; }
+				| FILTER IDENTIFIER IDENTIFIER expression	{ $$ = new Filter(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $3.Value), $4); $$.Location = CurrentLocationSpan; }
+				| AGGREGATE IDENTIFIER expression		{  }
+				| PIPE expression PIPE					{  }
+				;
 
 collListOpt		:															{ $$ = new CollateralItem(); $$.Location = CurrentLocationSpan; }
 				| COLLATERALITEM LBRACE statementList RBRACE collListOpt	{ $$ = new CollateralItem($3, $5); $$.Location = CurrentLocationSpan; }
@@ -121,30 +128,68 @@ secListOpt		:												{ $$ = new Bond(); $$.Location = CurrentLocationSpan; }
 				| BOND LBRACE statementList RBRACE secListOpt	{ $$ = new Bond($3, $5); $$.Location = CurrentLocationSpan; }
 				;
 
-expression		: IDENTIFIER							{ $$ = new Identifier(CurrentLocationSpan, $1.Value); $$.Location = CurrentLocationSpan; }
-				| IDENTIFIER LPAREN actuals RPAREN		{ $$ = new Invoke($1.Value, $3); $$.Location = CurrentLocationSpan; } 
+expression		: basicExpression						{ $$ = $1; $$.Location = CurrentLocationSpan; }
+				/*| advExpression							{ $$ = $1; $$.Location = CurrentLocationSpan; }*/
+				;
+
+basicExpression	: IDENTIFIER LPAREN actuals RPAREN		{ $$ = new Invoke($1.Value, $3); $$.Location = CurrentLocationSpan; } 
 				| literal								{ $$ = $1; $$.Location = CurrentLocationSpan; }
 				| compExpression						{ $$ = $1; $$.Location = CurrentLocationSpan; }
-				/*| lvalue								{ $$ = $1; $$.Location = CurrentLocationSpan; }*/
+				| lvalue								{ $$ = $1; $$.Location = CurrentLocationSpan; }
+				| arithmetic							{ $$ = $1; $$.Location = CurrentLocationSpan; }
 				;
 				/*
-lvalue			: literal DOT expression				{ $$ = new DereferenceField($1, $3.Value); $$.Location = CurrentLocationSpan; }
-				;*/
+advExpression	: FILTER IDENTIFIER IDENTIFIER FIRST	{ $$ = new Filter(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $3.Value), "first"); $$.Location = CurrentLocationSpan; }
+				| FILTER IDENTIFIER IDENTIFIER LAST		{ $$ = new Filter(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $3.Value), "last"); $$.Location = CurrentLocationSpan; }
+				| FILTER IDENTIFIER IDENTIFIER expression	{ $$ = new Filter(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $3.Value), $4); $$.Location = CurrentLocationSpan; }
+				| AGGREGATE IDENTIFIER expression		{  }
+				| PIPE expression PIPE					{  }
+				;
+				*/
+instantiation	: SMALLER IDENTIFIER COMMA IDENTIFIER GREATER	{ $$ = new TimeSeries(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $4.Value)); $$.Location = CurrentLocationSpan; }
+				| LBRACKET statementList RBRACKET				{ $$ = new Set($2); $$.Location =  CurrentLocationSpan; }
+				;
 
-compExpression	: expression EQ expression				{ $$ = new Equal($1, $3); $$.Location = CurrentLocationSpan; }
-				| expression NEQ expression				{ $$ = new NotEqual($1, $3); $$.Location = CurrentLocationSpan; }
-				| expression SMEQ expression			{ $$ = new SmallerEqual($1, $3); $$.Location = CurrentLocationSpan; }
-				| expression GTEQ expression			{ $$ = new GreaterEqual($1, $3); $$.Location = CurrentLocationSpan; }
-				| expression GREATER expression			{ $$ = new Greater($1, $3); $$.Location = CurrentLocationSpan; }
-				| expression SMALLER expression			{ $$ = new Smaller($1, $3); $$.Location = CurrentLocationSpan; }
+loop			: LBRACKET IDENTIFIER ASSIGN expression UPTO expression RBRACKET LPAREN statementList RPAREN					{ $$ = new Loop($2.Value, $4, "upto", $6, $9); $$.Location = CurrentLocationSpan; }
+				| LBRACKET IDENTIFIER ASSIGN expression DOWNTO expression RBRACKET LPAREN statementList RPAREN					{ $$ = new Loop($2.Value, $4, "downto", $6, $9); $$.Location = CurrentLocationSpan; }
+				| LBRACKET IDENTIFIER ASSIGN expression UPTO expression WITH expression RBRACKET LPAREN statementList RPAREN		{ $$ = new Loop($2.Value, $4, "upto", $6, $8, $11); $$.Location = CurrentLocationSpan; }
+				| LBRACKET IDENTIFIER ASSIGN expression DOWNTO expression WITH expression RBRACKET LPAREN statementList RPAREN    { $$ = new Loop($2.Value, $4, "downto", $6, $8, $11); $$.Location = CurrentLocationSpan; }
+				;
+
+lvalue			: IDENTIFIER							{ $$ = new Identifier(CurrentLocationSpan, $1.Value); $$.Location = CurrentLocationSpan; }
+				| lvalue DOT IDENTIFIER					{ $$ = new DereferenceField($1, $3.Value); $$.Location = CurrentLocationSpan; }
+				;
+
+compExpression	: basicExpression EQ basicExpression		{ $$ = new Equal($1, $3); $$.Location = CurrentLocationSpan; }
+				| basicExpression NEQ basicExpression		{ $$ = new NotEqual($1, $3); $$.Location = CurrentLocationSpan; }
+				| basicExpression SMEQ basicExpression		{ $$ = new SmallerEqual($1, $3); $$.Location = CurrentLocationSpan; }
+				| basicExpression GTEQ basicExpression		{ $$ = new GreaterEqual($1, $3); $$.Location = CurrentLocationSpan; }
+				| basicExpression GREATER basicExpression	{ $$ = new Greater($1, $3); $$.Location = CurrentLocationSpan; }
+				| basicExpression SMALLER basicExpression	{ $$ = new Smaller($1, $3); $$.Location = CurrentLocationSpan; }
+				;
+
+arithmetic		: basicExpression PLUS basicExpression		{ $$ = new Plus($1, $3); $$.Location = CurrentLocationSpan; }
+				| basicExpression MINUS basicExpression		{ $$ = new Minus($1, $3); $$.Location = CurrentLocationSpan; }
+				| basicExpression TIMES basicExpression		{ $$ = new Times($1, $3); $$.Location = CurrentLocationSpan; }
+				| basicExpression DIVIDE basicExpression	{ $$ = new Divide($1, $3); $$.Location = CurrentLocationSpan; }
+				| basicExpression MOD basicExpression		{ $$ = new Mod($1, $3); $$.Location = CurrentLocationSpan; }
+				| basicExpression EXP basicExpression		{ $$ = new Exp($1, $3); $$.Location = CurrentLocationSpan; }
+				| basicExpression ATPLUS basicExpression	{ $$ = new Plus($1, true, $3); $$.Location = CurrentLocationSpan; }
+				| basicExpression ATMINUS basicExpression	{ $$ = new Minus($1, true, $3); $$.Location = CurrentLocationSpan; }
+				| basicExpression ATTIMES basicExpression	{ $$ = new Times($1, true, $3); $$.Location = CurrentLocationSpan; }
+				| basicExpression ATDIV basicExpression		{ $$ = new Divide($1, true, $3); $$.Location = CurrentLocationSpan; }
+				| basicExpression ATMOD basicExpression		{ $$ = new Mod($1, true, $3); $$.Location = CurrentLocationSpan; }
+				| basicExpression ATEXP basicExpression		{ $$ = new Exp($1, true, $3); $$.Location = CurrentLocationSpan; }
+				| basicExpression INCREMENT					{ $$ = new Increment($1); $$.Location = CurrentLocationSpan; }
+				| basicExpression DECREMENT					{ $$ = new Decrement($1); $$.Location = CurrentLocationSpan; }
 				;
 
 actuals			:					{ $$ = new ExpressionList(); $$.Location = CurrentLocationSpan; }
 				| onePlusActuals	{ $$ = $1; $$.Location = CurrentLocationSpan; }
 				;
 
-onePlusActuals	: expression		{ $$ = new ExpressionList($1, new ExpressionList()); $$.Location = CurrentLocationSpan; }
-				| expression COMMA actuals { $$ = new ExpressionList($1, $3); $$.Location = CurrentLocationSpan; }
+onePlusActuals	: expression				{ $$ = new ExpressionList($1, new ExpressionList()); $$.Location = CurrentLocationSpan; }
+				| expression COMMA actuals	{ $$ = new ExpressionList($1, $3); $$.Location = CurrentLocationSpan; }
 				;
 
 literal			: LITERAL_INT		{ $$ = new IntegerLiteral(Int32.Parse($1.Value.ToString().Replace(",",""))); $$.Location = CurrentLocationSpan; } 

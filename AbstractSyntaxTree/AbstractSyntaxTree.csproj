@@ -43,6 +43,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Expressions\Arithmetic\Decrement.cs" />
+    <Compile Include="Expressions\Arithmetic\Divide.cs" />
+    <Compile Include="Expressions\Arithmetic\Exp.cs" />
+    <Compile Include="Expressions\Arithmetic\Increment.cs" />
+    <Compile Include="Expressions\Arithmetic\Minus.cs" />
+    <Compile Include="Expressions\Arithmetic\Mod.cs" />
+    <Compile Include="Expressions\Arithmetic\Plus.cs" />
+    <Compile Include="Expressions\Arithmetic\Times.cs" />
+    <Compile Include="Filter.cs" />
+    <Compile Include="InternalTypes\Set.cs" />
+    <Compile Include="InternalTypes\TimeSeries.cs" />
+    <Compile Include="Qualifier.cs" />
     <Compile Include="DeclarationClass.cs" />
     <Compile Include="DeclarationMethod.cs" />
     <Compile Include="Expressions\BinaryExpression.cs" />
@@ -59,8 +71,6 @@
     <Compile Include="Expressions\Greater.cs" />
     <Compile Include="Expressions\GreaterEqual.cs" />
     <Compile Include="Expressions\Identifier.cs" />
-    <Compile Include="Statements\IfThen.cs" />
-    <Compile Include="Statements\IfThenElse.cs" />
     <Compile Include="Literals\IntegerLiteral.cs" />
     <Compile Include="InternalTypes\Bond.cs" />
     <Compile Include="InternalTypes\Collateral.cs" />
@@ -75,6 +85,7 @@
     <Compile Include="InternalTypes\Securities.cs" />
     <Compile Include="InternalTypes\Settings.cs" />
     <Compile Include="InternalTypes\Simulation.cs" />
+    <Compile Include="Statements\Cons.cs" />
     <Compile Include="Statements\Invoke.cs" />
     <Compile Include="Node.cs" />
     <Compile Include="Expressions\NotEqual.cs" />
@@ -82,6 +93,7 @@
     <Compile Include="Literals\RealLiteral.cs" />
     <Compile Include="Expressions\Smaller.cs" />
     <Compile Include="Expressions\SmallerEqual.cs" />
+    <Compile Include="Statements\Loop.cs" />
     <Compile Include="Statements\Statement.cs" />
     <Compile Include="Statements\StatementExpression.cs" />
     <Compile Include="Statements\StatementList.cs" />

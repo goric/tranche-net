@@ -39,6 +39,19 @@ namespace AbstractSyntaxTree
             }
         }
 
+        #region arithmetic
+
+        public virtual void VisitExp(Exp n){}
+        public virtual void VisitMod(Mod n) { }
+        public virtual void VisitDivide(Divide n) { }
+        public virtual void VisitTimes(Times n) { }
+        public virtual void VisitMinus(Minus n) { }
+        public virtual void VisitPlus(Plus n) { }
+        public virtual void VisitIncrement(Increment n) { }
+        public virtual void VisitDecrement(Decrement n) { }
+
+        #endregion
+
         #endregion
 
         public virtual void VisitInternalRuleList (InternalTypes.InternalRuleList n) { }
@@ -50,11 +63,12 @@ namespace AbstractSyntaxTree
         public virtual void VisitStatement (Statement n) { }
         public virtual void VisitStatementExpression (StatementExpression n) { }
         public virtual void VisitBlock (Block n) { }
-        //public virtual void VisitStatementVariable (StatementVariable n) { }
-        public virtual void VisitIfThen (IfThen n) { }
-        public virtual void VisitIfThenElse (IfThenElse n) { }
         public virtual void VisitInvoke (Invoke n) { }
         public virtual void VisitAssign(Assign n) { }
+        public virtual void VisitLoop(Loop n) { }
+        public virtual void VisitQualifier(Qualifier n) { }
+        public virtual void VisitCons(Cons n) { }
+        public virtual void VisitFilter(Filter n) { }
 
         public virtual void VisitStatementList (StatementList n)
         {
@@ -79,6 +93,9 @@ namespace AbstractSyntaxTree
         public virtual void VisitSimulation (InternalTypes.Simulation n) { }
         public virtual void VisitCollateralItem (InternalTypes.CollateralItem n) { }
         public virtual void VisitBond (InternalTypes.Bond n) { }
+
+        public virtual void VisitSet(Set n) { }
+        public virtual void VisitTimeSeries(TimeSeries n) { }
 
         #endregion
     }

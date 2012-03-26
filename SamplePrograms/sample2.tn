@@ -1,0 +1,165 @@
+.Settings
+{
+	OutputFile: "C:\tranche\out.csv"
+}
+
+.Deal
+{
+	Name: "BACM 2005-3"
+	CutoffDate: "7/1/2005"
+}
+
+
+.Collateral
+{
+	.CollateralItem
+	{
+		ID: 0
+		PropertyName: "Woolworth Building"
+		OriginalBalance: 200,000,000
+		CurrentBalance: 200,000,000 
+		InterestRate: 0.05191
+		Maturity: "6/1/2015"
+		PropertyType: "Office"
+		City: "New York"
+		State: "NY"
+	}
+	.CollateralItem
+	{
+		ID: 1
+		PropertyName: "Ridgedale Center"
+		OriginalBalance: 168,632,029 
+		CurrentBalance: 168,632,029 
+		InterestRate: 0.04861
+		Maturity: "9/30/2016"
+		PropertyType: "Retail"
+		City: "Minnetonka"
+		State: "MN"
+	}
+	.CollateralItem
+	{
+		ID: 2
+		PropertyName: "Marley Station"
+		OriginalBalance: 114,400,000 
+		CurrentBalance: 100,000,000 
+		InterestRate: 0.04891
+		Maturity: "7/1/12"
+		PropertyType: "Retail"
+		City: "Glen Burnie"
+		State: "MD"
+	}
+	.CollateralItem
+	{
+		ID: 3
+		PropertyName: "Fiesta Mall"
+		OriginalBalance: 84,000,000
+		CurrentBalance: 78,000,000
+		InterestRate: 0.04875
+		Maturity: "1/1/2015"
+		PropertyType: "Retail"
+		City: "Mesa"
+		State: "AZ"
+	}
+}
+
+
+.Securities
+{
+	/* Minimally an Id (ID or CUSIP or Class), original + current balances, and coupon 
+		Coupon can be a set of { rate @ number of months, ... } rather than a number for floaters
+			the last rate is held in perpetuity until the bond matures
+			monthly rates assumed unless specified by PaymentFrequency property
+	*/
+	.Bond
+	{
+		ID: 0
+		CUSIP: "05947UR42"
+		Class: "A-2"
+		OriginalBalance: 505,650,000 
+		CurrentBalance: 125,483,169 
+		Coupon: 3.1
+	}
+	.Bond
+	{
+		ID: 1
+		CUSIP: "05947UR59"
+		Class: "A-3"
+		OriginalBalance: 279,216,000 
+		CurrentBalance: 279,216,000 
+		Coupon: 4.2
+	}
+	.Bond
+	{
+		ID: 2
+		CUSIP: "05947US41"
+		Class: "X"
+		OriginalBalance: 24,312,000
+		CurrentBalance: 24,312,000
+		Coupon: { 4.2 @ 5, 3.1 @ 4 }
+	}
+}
+
+
+.CreditPaymentRules
+{
+	/* If a bond is not represented in these sections, no payments will allocated to it... 
+		This can mean incorrect flows for all other bonds.
+	*/
+
+	.Interest
+	{
+		-> Class="A-2" or Class="A-3" /* denotes these receive interest payments equally */
+		-> Class="X"
+	}
+	.Principal
+	{
+		/* In this example, class X is interest-only */
+		-> CUSIP="05947UR42"
+		-> Class="A-3"
+	}
+}
+
+.CollateralPerformanceRules
+{
+	
+}
+
+
+/* 
+
+	Internal types available in this section (user cannot declare):
+		- CollateralCashflow : TimeSeries
+		- BondCashflow : TimeSeries
+		- TimeSeries -> ordered set of time/double tuples
+
+	Set<> is internal ordered collection (user can declare, with [] syntax)
+
+	Available internal functions:
+		- SimulateCollateral: _ -> Set<CollateralCashflow>
+		- SimulateCollateral: CollateralItem -> Set<CollateralCashflow>
+		- SimulateBond: Set<CollateralCashflow> -> Set<BondCashflow>
+		- Discount: (BondCashflow, [real] DiscountFactor) -> [real] price
+			or - (BondCashflow, [Set<real>] DiscountFactors) -> [real] price
+			or - (Set<BondCashflow>, [Set<real>] DiscountFactors) -> [Set<real>] prices
+
+	Available internal operations:
+		- where: criteria -> input set filtered based on criteria
+
+*/
+.Simulation
+{
+	collateralCashflows: SimulateCollateral() /*generate all*/
+	collat1cashflow: SimulateCollateral(where ID=2) /*generate subset*/
+	
+	bondCashflows: SimulateBonds(collateralCashflows) /*generate all*/
+	bond1Cf: bondCashflows where CUSIP="05947UR42"	/*extract subset*/
+
+	/* cashflow discount */
+	payments: [1000, 1000]
+	yields: [0.05 0.05]
+	bondCf: <payments, yields>
+	bond1Price: aggregate bondCf Discount(12)
+
+	/* loan amortization */
+
+}

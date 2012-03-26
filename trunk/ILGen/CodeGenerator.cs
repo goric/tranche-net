@@ -7,6 +7,7 @@ using System.Reflection.Emit;
 using AbstractSyntaxTree;
 using AbstractSyntaxTree.InternalTypes;
 using SemanticAnalysis;
+using TrancheLib;
 
 namespace ILGen
 {
@@ -74,27 +75,6 @@ namespace ILGen
             n.Securities.Visit(this);
             n.CreditPaymentRules.Visit(this);
             n.Simulation.Visit(this);
-
-            EmitRulesClass();
-        }
-
-        private void EmitRulesClass()
-        {
-            var funcType = typeof(List<>).MakeGenericType(typeof (Predicate<>).MakeGenericType(_moduleBuilder.GetType("Bond")));
-
-            var builder = _moduleBuilder.DefineType("PaymentRules", TypeAttributes.Public);
-            var ctor = builder.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard, Type.EmptyTypes);
-            var field = builder.DefineField("Preds", funcType, FieldAttributes.Public);
-
-            var listCtor = TypeBuilder.GetConstructor(funcType, typeof(List<>).GetConstructor(Type.EmptyTypes));
-
-            var gen = ctor.GetILGenerator();
-            gen.Emit(OpCodes.Ldarg_0);
-            gen.Emit(OpCodes.Newobj, listCtor);
-            gen.Emit(OpCodes.Stfld, field);
-            gen.Emit(OpCodes.Ret);
-
-            builder.CreateType();
         }
 
         public override void VisitSettings(Settings n) { HandleInternalType("Settings", n); }
@@ -123,11 +103,23 @@ namespace ILGen
         {
             SetupInternalClass(n, "CreditPaymentRules");
 
-            AddListMemberToInternalClass("CreditPaymentRules", "InterestRules", "Bond");
-            AddListMemberToInternalClass("CreditPaymentRules", "PrincipalRules", "Bond");
+            var bondType = _moduleBuilder.GetType("Bond");
+            var ruleType = typeof (Rule<,,>).MakeGenericType(bondType, bondType, bondType);
+
+            AddListMemberToInternalClass("CreditPaymentRules", "InterestRules", ruleType);
+            AddListMemberToInternalClass("CreditPaymentRules", "PrincipalRules", ruleType);
 
             n.Statements.Visit(this);
             _gen.Emit(OpCodes.Ret);
+        }
+        public override void VisitPrincipalRules(PrincipalRules n)
+        {
+            var predType = typeof (Predicate<>).MakeGenericType(_moduleBuilder.GetType("Bond"));
+
+            
+            n.Statements.Head.Visit(this);
+            if(n.Statements.Joiner != null)
+                n.Statements.Tail.Visit(this);
         }
 
         private void HandleInternalType(string name, DeclarationClass n)
@@ -215,6 +207,36 @@ namespace ILGen
                 n.Tail.Visit(this);
         }
 
+        public override void VisitBond(Bond n)
+        {
+            var collatType = _moduleBuilder.GetType("Bond");
+            var ctor = _typeManager.GetBuilderInfo("Bond").ConstructorBuilder.Builder;
+
+            _gen.DeclareLocal(collatType);
+            _gen.Emit(OpCodes.Newobj, ctor);
+            _gen.Emit(OpCodes.Stloc, _internalListIndex);
+
+            SetCurrentType("Bond");
+            if (n.Statements != null)
+                n.Statements.Visit(this);
+            SetCurrentType("Securities");
+
+            // add current item to the list member variable
+            _gen.Emit(OpCodes.Ldarg_0);
+            _gen.Emit(OpCodes.Ldfld, _typeManager.GetBuilderInfo(_currentType).FieldMap["Bonds"]);
+            _gen.Emit(OpCodes.Ldloc, _internalListIndex);
+
+            //get the generic add method and call it
+            var listType = typeof(List<>).MakeGenericType(_moduleBuilder.GetType("Bond"));
+            var method = TypeBuilder.GetMethod(listType, typeof(List<>).GetMethod("Add"));
+            _gen.Emit(OpCodes.Callvirt, method);
+
+            _internalListIndex++;
+
+            if (n.Tail != null && !n.Tail.IsEmpty)
+                n.Tail.Visit(this);
+        }
+
         public override void VisitInvoke (Invoke n)
         {
             if (InternalMethodManager.IsSystemMethod(n.Method))
@@ -281,6 +303,12 @@ namespace ILGen
             }
 
             _lastWalkedType = field.FieldType;
+        }
+
+        public override void VisitEqual(Equal n)
+        {
+            n.Left.Visit(this);
+            n.Right.Visit(this);
         }
 
         #region visit literals

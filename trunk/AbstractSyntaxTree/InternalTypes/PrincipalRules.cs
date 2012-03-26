@@ -4,10 +4,10 @@ namespace AbstractSyntaxTree.InternalTypes
 {
     public class PrincipalRules : StatementList
     {
-        public Expression Statements { get; set; }
+        public InternalRuleList Statements { get; set; }
 
         public PrincipalRules () { }
-        public PrincipalRules (Expression stmt)
+        public PrincipalRules(InternalRuleList stmt)
         {
             Statements = stmt;
         }

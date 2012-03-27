@@ -19,8 +19,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ILGen", "ILGen\ILGen.csproj
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SamplePrograms", "SamplePrograms", "{4E548D22-A91A-4475-A8A6-9A36D60729A8}"
 	ProjectSection(SolutionItems) = preProject
+		SamplePrograms\AmortExample.tn = SamplePrograms\AmortExample.tn
 		SamplePrograms\BasicExample.tn = SamplePrograms\BasicExample.tn
-		SamplePrograms\BasicExample2.tn = SamplePrograms\BasicExample2.tn
+		SamplePrograms\CollatExample.tn = SamplePrograms\CollatExample.tn
+		SamplePrograms\DiscountExample.tn = SamplePrograms\DiscountExample.tn
 		SamplePrograms\emptyShell.tn = SamplePrograms\emptyShell.tn
 		SamplePrograms\helloWorld.tn = SamplePrograms\helloWorld.tn
 		SamplePrograms\sample1.tn = SamplePrograms\sample1.tn

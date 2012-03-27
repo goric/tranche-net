@@ -1,0 +1,13 @@
+.Collateral {}
+.Securities {}
+.CreditPaymentRules {}
+.Simulation
+{
+	/* provided variables */
+	payments: [1000 1000]
+	yields: [0.05 0.05]
+
+	/* algorithm */
+	bondCf: <payments, yields>
+	bondPrice: aggregate bondCf discount(12)
+}

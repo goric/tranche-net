@@ -1,0 +1,28 @@
+.Collateral {}
+.Securities {}
+.CreditPaymentRules {}
+.Simulation
+{
+	/* provided variables */
+	initialBalance: 100,000
+	originationDate: (date)"1/1/2012"
+	maturityDate: (date)"1/1/2032"
+	interestRate: 5.0
+	paymentFrequency: 12
+
+	/* algorithm */
+	periodicRate: interestRate / paymentFrequency / 100
+	dateDiff: maturityDate - originationDate
+	periodicTerm: dateDiff.Years * paymentFrequency
+	periodicPayment: payment(initialBalance, periodicRate, periodicTerm)
+
+	payments: [i:0 upto periodicTerm](
+				outstandingBalance: outstandingBalance - periodicPayment
+				{
+					interest: outstandingBalance * periodicRate
+					principal: periodicPayment - interest
+					date: originationDate +Month(12 / paymentFrequency * i+1)
+					outstandingBalance: outstandingBalance	
+				})
+
+}

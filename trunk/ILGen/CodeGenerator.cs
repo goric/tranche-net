@@ -116,6 +116,8 @@ namespace ILGen
         {
             var predType = typeof (Predicate<>).MakeGenericType(_moduleBuilder.GetType("Bond"));
 
+            if (n.Statements == null) 
+                return;
             
             n.Statements.Head.Visit(this);
             if(n.Statements.Joiner != null)

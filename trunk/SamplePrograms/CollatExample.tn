@@ -1,0 +1,31 @@
+.Collateral {}
+.Securities {}
+.CreditPaymentRules {}
+.Simulation
+{
+	/* provided variables */
+	/*loans: []  assume this is populated with CollateralItem types */
+	/*rules: []  assume this is populated with Rule types */
+
+	/* algorithm */
+	schedules: [i:0 upto length(loans)](
+			 l: loans(i)
+			 rule: filter rules l first
+			 {
+			   rule()
+			 })
+
+	minPeriod: aggregate schedules min(date)
+	maxPeriod: aggregate schedules max(date)
+	dealSched: [x:minPeriod upto maxPeriod with x +Month(1)](
+				 thisYear: filter schedules s s.date.Year = x.Year
+				 thisMonth: filter thisYear s s.date.Month = x.Month
+				 int: aggregate thisMonth sum(interest)
+				 prin: aggregate thisMonth sum(principal)
+				 {
+				   interest: int
+				   principal: prin
+				   date: x
+				 })
+
+}

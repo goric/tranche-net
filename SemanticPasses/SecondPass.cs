@@ -99,7 +99,10 @@ namespace tc
 
         public override void VisitAssign(Assign n)
         {
-            var declFieldType = CheckSubTree(n.Expr);
+            InternalType declFieldType = null;
+            if(n.Expr != null) CheckSubTree(n.Expr);
+            else CheckSubTree(n.Statement);
+
             n.InternalType = declFieldType;
 
             var desc = _mgr.AddMember(n.LValue.Id, declFieldType, _currentClass);

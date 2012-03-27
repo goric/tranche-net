@@ -95,11 +95,6 @@ statement		: IDENTIFIER ASSIGN expression			{ $$ = new Assign(new Identifier(Cur
 				| expression							{ $$ = new StatementExpression($1); $$.Location = CurrentLocationSpan; }
 				| IDENTIFIER CONS literal				{ $$ = new Cons(new Identifier(CurrentLocationSpan, $1.Value), $3); $$.Location = CurrentLocationSpan; }
 				| IDENTIFIER CONS lvalue				{ $$ = new Cons(new Identifier(CurrentLocationSpan, $1.Value), $3); $$.Location = CurrentLocationSpan; }
-				| FILTER IDENTIFIER IDENTIFIER FIRST	{ $$ = new Filter(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $3.Value), "first"); $$.Location = CurrentLocationSpan; }
-				| FILTER IDENTIFIER IDENTIFIER LAST		{ $$ = new Filter(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $3.Value), "last"); $$.Location = CurrentLocationSpan; }
-				| FILTER IDENTIFIER IDENTIFIER expression	{ $$ = new Filter(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $3.Value), $4); $$.Location = CurrentLocationSpan; }
-				| AGGREGATE IDENTIFIER expression		{ $$ = new Aggregate(new Identifier(CurrentLocationSpan, $2.Value), $3); $$.Location = CurrentLocationSpan; }
-				| PIPE expression PIPE					{ $$ = new RuleType($2); $$.Location = CurrentLocationSpan; }
 				;
 
 collListOpt		:															{ $$ = new CollateralItem(); $$.Location = CurrentLocationSpan; }
@@ -119,6 +114,12 @@ expression		: IDENTIFIER LPAREN actuals RPAREN		{ $$ = new Invoke($1.Value, $3);
 
 instantiation	: SMALLER IDENTIFIER COMMA IDENTIFIER GREATER	{ $$ = new TimeSeries(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $4.Value)); $$.Location = CurrentLocationSpan; }
 				| LBRACKET statementList RBRACKET				{ $$ = new Set($2); $$.Location =  CurrentLocationSpan; }
+				| FILTER IDENTIFIER IDENTIFIER FIRST	{ $$ = new Filter(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $3.Value), "first"); $$.Location = CurrentLocationSpan; }
+				| FILTER IDENTIFIER IDENTIFIER LAST		{ $$ = new Filter(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $3.Value), "last"); $$.Location = CurrentLocationSpan; }
+				| FILTER IDENTIFIER IDENTIFIER expression	{ $$ = new Filter(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $3.Value), $4); $$.Location = CurrentLocationSpan; }
+				| AGGREGATE IDENTIFIER expression		{ $$ = new Aggregate(new Identifier(CurrentLocationSpan, $2.Value), $3); $$.Location = CurrentLocationSpan; }
+				| PIPE expression PIPE					{ $$ = new RuleType($2); $$.Location = CurrentLocationSpan; }
+				| loop									{ $$ = $1; $$.Location = CurrentLocationSpan; }
 				;
 
 loop			: LBRACKET IDENTIFIER ASSIGN expression UPTO expression RBRACKET LPAREN statementList RPAREN					{ $$ = new Loop($2.Value, $4, "upto", $6, $9); $$.Location = CurrentLocationSpan; }

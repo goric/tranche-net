@@ -4,7 +4,7 @@
 // ==========================================================================
 //  Version:  1.4.0
 //  Machine:  VOSTRO
-//  DateTime: 3/26/2012 12:20:03 PM
+//  DateTime: 3/26/2012 7:48:51 PM
 //  UserName: Tim
 // ==========================================================================
 
@@ -39,7 +39,7 @@
 %type<Prog> program
 %type<StatementList> statementList 
 %type<Statement> statement loop instantiation
-%type<Expression> expression literal compExpression lvalue basicExpression advExpression arithmetic
+%type<Expression> expression literal compExpression lvalue expression arithmetic arithmeticPlain compBool
 %type<ExpressionList> onePlusActuals actuals boolListOpt
 
 /* Non-terminal types, tranche-specific */
@@ -51,13 +51,13 @@
 %type<PrincipalRules> principalRules
 
 %%
-// Warning: NonTerminal symbol "advExpression" is unreachable
-// Error: NonTerminal symbol "advExpression" has no productions
+// Warning: NonTerminal symbol "compBool" is unreachable
+// Error: NonTerminal symbol "compBool" has no productions
 // Error: There are 1 non-terminating NonTerminal Symbols
-   //  {advExpression}
-// Warning: Terminating advExpression fixes the following size-1 NonTerminal set
-   // {advExpression}
-// -----------------------------------------------------------------------------
+   //  {compBool}
+// Warning: Terminating compBool fixes the following size-1 NonTerminal set
+   // {compBool}
+// ------------------------------------------------------------------------
 
 /* Non-terminal productions */
 program			: settingsOpt dealOpt collatSection securitySection	creditRulesOpt simSection { $$ = new Prog($1, $2, $3, $4, $5, $6); SyntaxTreeRoot = $$; $$.Location = CurrentLocationSpan; }
@@ -106,18 +106,13 @@ statementList	:										{ $$ = new StatementList(); $$.Location = CurrentLocati
 				;
 
 statement		: IDENTIFIER ASSIGN expression			{ $$ = new Assign(new Identifier(CurrentLocationSpan, $1.Value), $3); $$.Location = CurrentLocationSpan; }
-				| IDENTIFIER ASSIGN instantiation		{  }
+				| IDENTIFIER ASSIGN instantiation		{ $$ = new Assign(new Identifier(CurrentLocationSpan, $1.Value), $3); $$.Location = CurrentLocationSpan; }
 				| IDENTIFIER ASSIGN LPAREN IDENTIFIER RPAREN expression { $$ = new Assign(new Identifier(CurrentLocationSpan, $1.Value), new Qualifier($4.Value, $6)); $$.Location = CurrentLocationSpan; }
 				| LBRACE statementList RBRACE			{ $$ = new Block($2); $$.Location = CurrentLocationSpan; }
 				| loop									{ $$ = $1; $$.Location = CurrentLocationSpan; }
 				| expression							{ $$ = new StatementExpression($1); $$.Location = CurrentLocationSpan; }
 				| IDENTIFIER CONS literal				{ $$ = new Cons(new Identifier(CurrentLocationSpan, $1.Value), $3); $$.Location = CurrentLocationSpan; }
 				| IDENTIFIER CONS lvalue				{ $$ = new Cons(new Identifier(CurrentLocationSpan, $1.Value), $3); $$.Location = CurrentLocationSpan; }
-				| FILTER IDENTIFIER IDENTIFIER FIRST	{ $$ = new Filter(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $3.Value), "first"); $$.Location = CurrentLocationSpan; }
-				| FILTER IDENTIFIER IDENTIFIER LAST		{ $$ = new Filter(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $3.Value), "last"); $$.Location = CurrentLocationSpan; }
-				| FILTER IDENTIFIER IDENTIFIER expression	{ $$ = new Filter(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $3.Value), $4); $$.Location = CurrentLocationSpan; }
-				| AGGREGATE IDENTIFIER expression		{  }
-				| PIPE expression PIPE					{  }
 				;
 
 collListOpt		:															{ $$ = new CollateralItem(); $$.Location = CurrentLocationSpan; }
@@ -128,26 +123,21 @@ secListOpt		:												{ $$ = new Bond(); $$.Location = CurrentLocationSpan; }
 				| BOND LBRACE statementList RBRACE secListOpt	{ $$ = new Bond($3, $5); $$.Location = CurrentLocationSpan; }
 				;
 
-expression		: basicExpression						{ $$ = $1; $$.Location = CurrentLocationSpan; }
-				/*| advExpression							{ $$ = $1; $$.Location = CurrentLocationSpan; }*/
-				;
-
-basicExpression	: IDENTIFIER LPAREN actuals RPAREN		{ $$ = new Invoke($1.Value, $3); $$.Location = CurrentLocationSpan; } 
+expression		: IDENTIFIER LPAREN actuals RPAREN		{ $$ = new Invoke($1.Value, $3); $$.Location = CurrentLocationSpan; } 
 				| literal								{ $$ = $1; $$.Location = CurrentLocationSpan; }
 				| compExpression						{ $$ = $1; $$.Location = CurrentLocationSpan; }
 				| lvalue								{ $$ = $1; $$.Location = CurrentLocationSpan; }
 				| arithmetic							{ $$ = $1; $$.Location = CurrentLocationSpan; }
 				;
-				/*
-advExpression	: FILTER IDENTIFIER IDENTIFIER FIRST	{ $$ = new Filter(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $3.Value), "first"); $$.Location = CurrentLocationSpan; }
-				| FILTER IDENTIFIER IDENTIFIER LAST		{ $$ = new Filter(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $3.Value), "last"); $$.Location = CurrentLocationSpan; }
-				| FILTER IDENTIFIER IDENTIFIER expression	{ $$ = new Filter(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $3.Value), $4); $$.Location = CurrentLocationSpan; }
-				| AGGREGATE IDENTIFIER expression		{  }
-				| PIPE expression PIPE					{  }
-				;
-				*/
+
 instantiation	: SMALLER IDENTIFIER COMMA IDENTIFIER GREATER	{ $$ = new TimeSeries(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $4.Value)); $$.Location = CurrentLocationSpan; }
 				| LBRACKET statementList RBRACKET				{ $$ = new Set($2); $$.Location =  CurrentLocationSpan; }
+				| FILTER IDENTIFIER IDENTIFIER FIRST	{ $$ = new Filter(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $3.Value), "first"); $$.Location = CurrentLocationSpan; }
+				| FILTER IDENTIFIER IDENTIFIER LAST		{ $$ = new Filter(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $3.Value), "last"); $$.Location = CurrentLocationSpan; }
+				| FILTER IDENTIFIER IDENTIFIER expression	{ $$ = new Filter(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $3.Value), $4); $$.Location = CurrentLocationSpan; }
+				| AGGREGATE IDENTIFIER expression		{ $$ = new Aggregate(new Identifier(CurrentLocationSpan, $2.Value), $3); $$.Location = CurrentLocationSpan; }
+				| PIPE expression PIPE					{ $$ = new RuleType($2); $$.Location = CurrentLocationSpan; }
+				| loop									{ $$ = $1; $$.Location = CurrentLocationSpan; }
 				;
 
 loop			: LBRACKET IDENTIFIER ASSIGN expression UPTO expression RBRACKET LPAREN statementList RPAREN					{ $$ = new Loop($2.Value, $4, "upto", $6, $9); $$.Location = CurrentLocationSpan; }
@@ -160,28 +150,31 @@ lvalue			: IDENTIFIER							{ $$ = new Identifier(CurrentLocationSpan, $1.Value)
 				| lvalue DOT IDENTIFIER					{ $$ = new DereferenceField($1, $3.Value); $$.Location = CurrentLocationSpan; }
 				;
 
-compExpression	: basicExpression EQ basicExpression		{ $$ = new Equal($1, $3); $$.Location = CurrentLocationSpan; }
-				| basicExpression NEQ basicExpression		{ $$ = new NotEqual($1, $3); $$.Location = CurrentLocationSpan; }
-				| basicExpression SMEQ basicExpression		{ $$ = new SmallerEqual($1, $3); $$.Location = CurrentLocationSpan; }
-				| basicExpression GTEQ basicExpression		{ $$ = new GreaterEqual($1, $3); $$.Location = CurrentLocationSpan; }
-				| basicExpression GREATER basicExpression	{ $$ = new Greater($1, $3); $$.Location = CurrentLocationSpan; }
-				| basicExpression SMALLER basicExpression	{ $$ = new Smaller($1, $3); $$.Location = CurrentLocationSpan; }
+compExpression	: expression EQ expression		{ $$ = new Equal($1, $3); $$.Location = CurrentLocationSpan; }
+				| expression NEQ expression		{ $$ = new NotEqual($1, $3); $$.Location = CurrentLocationSpan; }
+				| expression SMEQ expression	{ $$ = new SmallerEqual($1, $3); $$.Location = CurrentLocationSpan; }
+				| expression GTEQ expression	{ $$ = new GreaterEqual($1, $3); $$.Location = CurrentLocationSpan; }
+				| expression GREATER expression	{ $$ = new Greater($1, $3); $$.Location = CurrentLocationSpan; }
+				| expression SMALLER expression	{ $$ = new Smaller($1, $3); $$.Location = CurrentLocationSpan; }
 				;
 
-arithmetic		: basicExpression PLUS basicExpression		{ $$ = new Plus($1, $3); $$.Location = CurrentLocationSpan; }
-				| basicExpression MINUS basicExpression		{ $$ = new Minus($1, $3); $$.Location = CurrentLocationSpan; }
-				| basicExpression TIMES basicExpression		{ $$ = new Times($1, $3); $$.Location = CurrentLocationSpan; }
-				| basicExpression DIVIDE basicExpression	{ $$ = new Divide($1, $3); $$.Location = CurrentLocationSpan; }
-				| basicExpression MOD basicExpression		{ $$ = new Mod($1, $3); $$.Location = CurrentLocationSpan; }
-				| basicExpression EXP basicExpression		{ $$ = new Exp($1, $3); $$.Location = CurrentLocationSpan; }
-				| basicExpression ATPLUS basicExpression	{ $$ = new Plus($1, true, $3); $$.Location = CurrentLocationSpan; }
-				| basicExpression ATMINUS basicExpression	{ $$ = new Minus($1, true, $3); $$.Location = CurrentLocationSpan; }
-				| basicExpression ATTIMES basicExpression	{ $$ = new Times($1, true, $3); $$.Location = CurrentLocationSpan; }
-				| basicExpression ATDIV basicExpression		{ $$ = new Divide($1, true, $3); $$.Location = CurrentLocationSpan; }
-				| basicExpression ATMOD basicExpression		{ $$ = new Mod($1, true, $3); $$.Location = CurrentLocationSpan; }
-				| basicExpression ATEXP basicExpression		{ $$ = new Exp($1, true, $3); $$.Location = CurrentLocationSpan; }
-				| basicExpression INCREMENT					{ $$ = new Increment($1); $$.Location = CurrentLocationSpan; }
-				| basicExpression DECREMENT					{ $$ = new Decrement($1); $$.Location = CurrentLocationSpan; }
+arithmetic		: arithmeticPlain				{ $$ = $1; $$.Location = CurrentLocationSpan; }
+				;
+
+arithmeticPlain	: expression PLUS expression	{ $$ = new Plus($1, $3); $$.Location = CurrentLocationSpan; }
+				| expression MINUS expression	{ $$ = new Minus($1, $3); $$.Location = CurrentLocationSpan; }
+				| expression TIMES expression	{ $$ = new Times($1, $3); $$.Location = CurrentLocationSpan; }
+				| expression DIVIDE expression	{ $$ = new Divide($1, $3); $$.Location = CurrentLocationSpan; }
+				| expression MOD expression		{ $$ = new Mod($1, $3); $$.Location = CurrentLocationSpan; }
+				| expression EXP expression		{ $$ = new Exp($1, $3); $$.Location = CurrentLocationSpan; }
+				| expression ATPLUS expression	{ $$ = new Plus($1, true, $3); $$.Location = CurrentLocationSpan; }
+				| expression ATMINUS expression	{ $$ = new Minus($1, true, $3); $$.Location = CurrentLocationSpan; }
+				| expression ATTIMES expression	{ $$ = new Times($1, true, $3); $$.Location = CurrentLocationSpan; }
+				| expression ATDIV expression	{ $$ = new Divide($1, true, $3); $$.Location = CurrentLocationSpan; }
+				| expression ATMOD expression	{ $$ = new Mod($1, true, $3); $$.Location = CurrentLocationSpan; }
+				| expression ATEXP expression	{ $$ = new Exp($1, true, $3); $$.Location = CurrentLocationSpan; }
+				| expression INCREMENT			{ $$ = new Increment($1); $$.Location = CurrentLocationSpan; }
+				| expression DECREMENT			{ $$ = new Decrement($1); $$.Location = CurrentLocationSpan; }
 				;
 
 actuals			:					{ $$ = new ExpressionList(); $$.Location = CurrentLocationSpan; }

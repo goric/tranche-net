@@ -7,9 +7,10 @@ namespace AbstractSyntaxTree
         public Expression Object { get; set; }
         public String Method { get; set; }
         public ExpressionList Actuals { get; set; }
+        public SpecialFunction SpecialFunc { get; set; }
         //public Descriptor Descriptor { get; set; }
 
-        public Invoke (String method, ExpressionList actuals)
+        public Invoke (string method, ExpressionList actuals)
         {
             Method = method;
             Actuals = actuals;
@@ -20,10 +21,17 @@ namespace AbstractSyntaxTree
             Method = method;
             Actuals = actuals;
         }
+        public Invoke(Expression obj, SpecialFunction func)
+        {
+            Object = obj;
+            SpecialFunc = func;
+        }
 
         public override String Print(int depth)
         {
-            return (Object == null ? "global" : Object.Print(depth)) + "." + Method + "(" + Actuals.Print(depth) + ")";
+            return (Object == null ? "global" : Object.Print(depth)) 
+                + "." + (string.IsNullOrEmpty(Method) ? SpecialFunc.Print(depth) : Method) 
+                + (Actuals == null ? string.Empty : "(" + Actuals.Print(depth) + ")");
         }
 
         public override void Visit (Visitor v)

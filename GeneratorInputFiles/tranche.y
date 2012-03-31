@@ -15,6 +15,7 @@
 %token<Token> RULE PLUS MINUS TIMES DIVIDE SMALLER GREATER SMEQ GTEQ EQ NEQ ASSIGN NOT MOD 
 %token<Token> LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET PBRACKET INCREMENT DECREMENT EXP DOT COMMA CONS 
 %token<Token> ATPLUS ATMINUS ATTIMES ATDIV ATMOD ATEXP PIPE LITERAL_INT LITERAL_REAL LITERAL_STRING IDENTIFIER
+%token<Token> PLUSDAY MINUSDAY PLUSMONTH MINUSMONTH PLUSYEAR MINUSYEAR
 
 /* Precedence rules */
 %right ASSIGN
@@ -30,6 +31,7 @@
 %type<Statement> statement loop instantiation
 %type<Expression> expression literal compExpression lvalue expression arithmetic
 %type<ExpressionList> onePlusActuals actuals boolListOpt
+%type<SpecialFunction> specialFunction
 
 /* Non-terminal types, tranche-specific */
 %type<DeclarationClass> settingsOpt dealOpt collatSection securitySection simSection secListOpt creditRulesOpt
@@ -106,26 +108,28 @@ secListOpt		:												{ $$ = new Bond(); $$.Location = CurrentLocationSpan; }
 				;
 
 expression		: IDENTIFIER LPAREN actuals RPAREN		{ $$ = new Invoke($1.Value, $3); $$.Location = CurrentLocationSpan; } 
+				| lvalue DOT IDENTIFIER LPAREN actuals RPAREN		{ $$ = new Invoke($1, $3.Value, $5); $$.Location = CurrentLocationSpan; } 
 				| literal								{ $$ = $1; $$.Location = CurrentLocationSpan; }
 				| compExpression						{ $$ = $1; $$.Location = CurrentLocationSpan; }
 				| lvalue								{ $$ = $1; $$.Location = CurrentLocationSpan; }
 				| arithmetic							{ $$ = $1; $$.Location = CurrentLocationSpan; }
+				| lvalue specialFunction				{ $$ = new Invoke($1, $2); $$.Location = CurrentLocationSpan; }
 				;
 
 instantiation	: SMALLER IDENTIFIER COMMA IDENTIFIER GREATER	{ $$ = new TimeSeries(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $4.Value)); $$.Location = CurrentLocationSpan; }
 				| LBRACKET statementList RBRACKET				{ $$ = new Set($2); $$.Location =  CurrentLocationSpan; }
-				| FILTER IDENTIFIER IDENTIFIER FIRST	{ $$ = new Filter(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $3.Value), "first"); $$.Location = CurrentLocationSpan; }
-				| FILTER IDENTIFIER IDENTIFIER LAST		{ $$ = new Filter(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $3.Value), "last"); $$.Location = CurrentLocationSpan; }
-				| FILTER IDENTIFIER IDENTIFIER expression	{ $$ = new Filter(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $3.Value), $4); $$.Location = CurrentLocationSpan; }
-				| AGGREGATE IDENTIFIER expression		{ $$ = new Aggregate(new Identifier(CurrentLocationSpan, $2.Value), $3); $$.Location = CurrentLocationSpan; }
-				| PIPE expression PIPE					{ $$ = new RuleType($2); $$.Location = CurrentLocationSpan; }
-				| loop									{ $$ = $1; $$.Location = CurrentLocationSpan; }
+				| FILTER IDENTIFIER IDENTIFIER FIRST			{ $$ = new Filter(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $3.Value), "first"); $$.Location = CurrentLocationSpan; }
+				| FILTER IDENTIFIER IDENTIFIER LAST				{ $$ = new Filter(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $3.Value), "last"); $$.Location = CurrentLocationSpan; }
+				| FILTER IDENTIFIER IDENTIFIER expression		{ $$ = new Filter(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $3.Value), $4); $$.Location = CurrentLocationSpan; }
+				| AGGREGATE IDENTIFIER expression				{ $$ = new Aggregate(new Identifier(CurrentLocationSpan, $2.Value), $3); $$.Location = CurrentLocationSpan; }
+				| PIPE expression PIPE							{ $$ = new RuleType($2); $$.Location = CurrentLocationSpan; }
+				| loop											{ $$ = $1; $$.Location = CurrentLocationSpan; }
 				;
 
 loop			: LBRACKET IDENTIFIER ASSIGN expression UPTO expression RBRACKET LPAREN statementList RPAREN					{ $$ = new Loop($2.Value, $4, "upto", $6, $9); $$.Location = CurrentLocationSpan; }
 				| LBRACKET IDENTIFIER ASSIGN expression DOWNTO expression RBRACKET LPAREN statementList RPAREN					{ $$ = new Loop($2.Value, $4, "downto", $6, $9); $$.Location = CurrentLocationSpan; }
-				| LBRACKET IDENTIFIER ASSIGN expression UPTO expression WITH expression RBRACKET LPAREN statementList RPAREN		{ $$ = new Loop($2.Value, $4, "upto", $6, $8, $11); $$.Location = CurrentLocationSpan; }
-				| LBRACKET IDENTIFIER ASSIGN expression DOWNTO expression WITH expression RBRACKET LPAREN statementList RPAREN    { $$ = new Loop($2.Value, $4, "downto", $6, $8, $11); $$.Location = CurrentLocationSpan; }
+				| LBRACKET IDENTIFIER ASSIGN expression UPTO expression WITH expression RBRACKET LPAREN statementList RPAREN	{ $$ = new Loop($2.Value, $4, "upto", $6, $8, $11); $$.Location = CurrentLocationSpan; }
+				| LBRACKET IDENTIFIER ASSIGN expression DOWNTO expression WITH expression RBRACKET LPAREN statementList RPAREN  { $$ = new Loop($2.Value, $4, "downto", $6, $8, $11); $$.Location = CurrentLocationSpan; }
 				;
 
 lvalue			: IDENTIFIER							{ $$ = new Identifier(CurrentLocationSpan, $1.Value); $$.Location = CurrentLocationSpan; }
@@ -154,6 +158,14 @@ arithmetic		: expression PLUS expression	{ $$ = new Plus($1, $3); $$.Location = 
 				| expression ATEXP expression	{ $$ = new Exp($1, true, $3); $$.Location = CurrentLocationSpan; }
 				| expression INCREMENT			{ $$ = new Increment($1); $$.Location = CurrentLocationSpan; }
 				| expression DECREMENT			{ $$ = new Decrement($1); $$.Location = CurrentLocationSpan; }
+				;
+
+specialFunction : PLUSDAY LPAREN expression RPAREN		{ $$ = new SpecialFunction($1.Value, $3); $$.Location = CurrentLocationSpan; }
+				| MINUSDAY LPAREN expression RPAREN		{ $$ = new SpecialFunction($1.Value, $3); $$.Location = CurrentLocationSpan; }
+				| PLUSMONTH LPAREN expression RPAREN	{ $$ = new SpecialFunction($1.Value, $3); $$.Location = CurrentLocationSpan; }
+				| MINUSMONTH LPAREN expression RPAREN	{ $$ = new SpecialFunction($1.Value, $3); $$.Location = CurrentLocationSpan; }
+				| PLUSYEAR LPAREN expression RPAREN		{ $$ = new SpecialFunction($1.Value, $3); $$.Location = CurrentLocationSpan; }
+				| MINUSYEAR LPAREN expression RPAREN	{ $$ = new SpecialFunction($1.Value, $3); $$.Location = CurrentLocationSpan; }
 				;
 
 actuals			:					{ $$ = new ExpressionList(); $$.Location = CurrentLocationSpan; }

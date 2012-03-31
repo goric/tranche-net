@@ -89,6 +89,38 @@ namespace TestTranche
             }
         }
 
+        [TestMethod]
+        public void TestCanParseSample1()
+        {
+            const string source = @"..\..\..\SamplePrograms\sample1.tn";
+
+            try
+            {
+                var ret = Parse(source);
+                Assert.AreEqual(true, ret);
+            }
+            catch (Exception e)
+            {
+                Assert.Fail(e.ToString());
+            }
+        }
+
+        [TestMethod]
+        public void TestCanParseSample2()
+        {
+            const string source = @"..\..\..\SamplePrograms\sample2.tn";
+
+            try
+            {
+                var ret = Parse(source);
+                Assert.AreEqual(true, ret);
+            }
+            catch (Exception e)
+            {
+                Assert.Fail(e.ToString());
+            }
+        }
+
         private bool Parse(string source)
         {
             var scan = new Scanner();

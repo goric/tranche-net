@@ -47,6 +47,12 @@ String		\"(\\.|[^"])*\"
 "first"				{ yylval.Token = new Token(Tokens.FIRST, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.FIRST); return (int) Tokens.FIRST; }
 "last"				{ yylval.Token = new Token(Tokens.LAST, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.LAST); return (int) Tokens.LAST; }
 "with"				{ yylval.Token = new Token(Tokens.WITH, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.WITH); return (int) Tokens.WITH; }
+"+Day"				{ yylval.Token = new Token(Tokens.PLUSDAY, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.PLUSDAY); return (int) Tokens.PLUSDAY; }
+"-Day"				{ yylval.Token = new Token(Tokens.MINUSDAY, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.MINUSDAY); return (int) Tokens.MINUSDAY; }
+"+Month"			{ yylval.Token = new Token(Tokens.PLUSMONTH, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.PLUSMONTH); return (int) Tokens.PLUSMONTH; }
+"-Month"			{ yylval.Token = new Token(Tokens.MINUSMONTH, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.MINUSMONTH); return (int) Tokens.MINUSMONTH; }
+"+Year"				{ yylval.Token = new Token(Tokens.PLUSYEAR, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.PLUSYEAR); return (int) Tokens.PLUSYEAR; }
+"-Year"				{ yylval.Token = new Token(Tokens.MINUSYEAR, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.MINUSYEAR); return (int) Tokens.MINUSYEAR; }
 
 /* operators */
 
@@ -63,6 +69,7 @@ String		\"(\\.|[^"])*\"
 ">="        	    { yylval.Token = new Token(Tokens.GTEQ, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.GTEQ); return (int) Tokens.GTEQ; }
 "="               	{ yylval.Token = new Token(Tokens.EQ, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.EQ); return (int) Tokens.EQ; }
 "!="               	{ yylval.Token = new Token(Tokens.NEQ, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.NEQ); return (int) Tokens.NEQ; }
+"<>"               	{ yylval.Token = new Token(Tokens.NEQ, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.NEQ); return (int) Tokens.NEQ; }
 ":"                	{ yylval.Token = new Token(Tokens.ASSIGN, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.ASSIGN); return (int) Tokens.ASSIGN; }
 "!"                	{ yylval.Token = new Token(Tokens.NOT, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.NOT); return (int) Tokens.NOT; }
 "%"	                { yylval.Token = new Token(Tokens.MOD, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.MOD); return (int) Tokens.MOD; }

@@ -29,6 +29,7 @@ namespace AbstractSyntaxTree
         public virtual void VisitSmaller (Smaller n) { }
         public virtual void VisitDereferenceField(DereferenceField n) { }
         public virtual void VisitInstantiateClass(InstantiateClass n) { }
+        public virtual void VisitSpecialFunction(SpecialFunction n) { }
 
         public virtual void VisitExprList (ExpressionList n)
         {

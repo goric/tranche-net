@@ -64,6 +64,7 @@
     <Compile Include="Expressions\InstantiateClass.cs" />
     <Compile Include="Expressions\LValue.cs" />
     <Compile Include="RuleType.cs" />
+    <Compile Include="SpecialFunction.cs" />
     <Compile Include="Statements\Assign.cs" />
     <Compile Include="Statements\Block.cs" />
     <Compile Include="Literals\BooleanLiteral.cs" />

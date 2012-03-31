@@ -95,7 +95,7 @@
 		Class: "X"
 		OriginalBalance: 24,312,000
 		CurrentBalance: 24,312,000
-		Coupon: { 4.2 @ 5, 3.1 @ 4 }
+		Coupon: 4.23
 	}
 }
 
@@ -118,12 +118,6 @@
 		-> Class="A-3"
 	}
 }
-
-.CollateralPerformanceRules
-{
-	
-}
-
 
 /* 
 
@@ -149,10 +143,8 @@
 .Simulation
 {
 	collateralCashflows: SimulateCollateral() /*generate all*/
-	collat1cashflow: SimulateCollateral(where ID=2) /*generate subset*/
 	
 	bondCashflows: SimulateBonds(collateralCashflows) /*generate all*/
-	bond1Cf: bondCashflows where CUSIP="05947UR42"	/*extract subset*/
 
 	/* cashflow discount */
 	payments: [1000, 1000]

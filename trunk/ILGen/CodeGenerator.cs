@@ -118,10 +118,11 @@ namespace ILGen
 
             if (n.Statements == null) 
                 return;
-            
+            /*
             n.Statements.Head.Visit(this);
             if(n.Statements.Joiner != null)
                 n.Statements.Tail.Visit(this);
+            */ 
         }
 
         private void HandleInternalType(string name, DeclarationClass n)

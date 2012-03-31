@@ -49,9 +49,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestInternalTypes.cs" />
     <Compile Include="TestLexAndParse.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AbstractSyntaxTree\AbstractSyntaxTree.csproj">
+      <Project>{3FB5701D-451C-452B-806C-860F7338D23C}</Project>
+      <Name>AbstractSyntaxTree</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ILGen\ILGen.csproj">
+      <Project>{F50AB0A3-093D-40FF-8718-E4488F6C3FC7}</Project>
+      <Name>ILGen</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SemanticAnalysis\SemanticAnalysis.csproj">
+      <Project>{7F5D0551-17D7-4D74-8A94-E1F6799707EB}</Project>
+      <Name>SemanticAnalysis</Name>
+    </ProjectReference>
     <ProjectReference Include="..\tc.csproj">
       <Project>{0E408228-7AEA-4291-A05D-590D998A9583}</Project>
       <Name>tc</Name>

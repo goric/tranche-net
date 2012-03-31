@@ -6,7 +6,7 @@
 .Deal
 {
 	Name: "BACM 2005-3"
-	CutoffDate: "7/1/2005"
+	CutoffDate: (date)"7/1/2005"
 }
 
 

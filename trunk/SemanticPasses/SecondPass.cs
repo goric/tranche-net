@@ -100,8 +100,7 @@ namespace tc
         public override void VisitAssign(Assign n)
         {
             InternalType declFieldType = null;
-            if(n.Expr != null) CheckSubTree(n.Expr);
-            else CheckSubTree(n.Statement);
+            declFieldType = n.Expr != null ? CheckSubTree(n.Expr) : CheckSubTree(n.Statement);
 
             n.InternalType = declFieldType;
 

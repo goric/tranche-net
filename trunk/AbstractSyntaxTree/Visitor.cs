@@ -3,23 +3,16 @@ namespace AbstractSyntaxTree
 {
     public abstract class Visitor
     {
-        public bool DebugMode { get; set; }
-        public virtual void VisitNode (Node n) { }
-
         public virtual void VisitProgram (Prog n) { }
-
-        public virtual void VisitDeclarationMethod (DeclarationMethod n) { }
         public virtual void VisitDeclarationClass(DeclarationClass n) { }
 
         #region Expressions
 
-        public virtual void VisitExpr (Expression n) { }
         public virtual void VisitStringLiteral (StringLiteral n) { }
         public virtual void VisitIntegerLiteral (IntegerLiteral n) { }
         public virtual void VisitRealLiteral (RealLiteral n) { }
         public virtual void VisitBooleanLiteral (BooleanLiteral n) { }
         public virtual void VisitIdentifier (Identifier n) { }
-        public virtual void VisitBinaryExpression (BinaryExpression n) { }
         public virtual void VisitEqual (Equal n) { }
         public virtual void VisitNotEqual (NotEqual n) { }
         public virtual void VisitSmallerEqual (SmallerEqual n) { }
@@ -29,6 +22,7 @@ namespace AbstractSyntaxTree
         public virtual void VisitDereferenceField(DereferenceField n) { }
         public virtual void VisitInstantiateClass(InstantiateClass n) { }
         public virtual void VisitSpecialFunction(SpecialFunction n) { }
+        public virtual void VisitConcat(Concat n) { }
 
         public virtual void VisitExprList (ExpressionList n)
         {
@@ -60,9 +54,7 @@ namespace AbstractSyntaxTree
 
         #region Statements
 
-        public virtual void VisitStatement (Statement n) { }
         public virtual void VisitStatementExpression (StatementExpression n) { }
-        public virtual void VisitBlock (Block n) { }
         public virtual void VisitInvoke (Invoke n) { }
         public virtual void VisitAssign(Assign n) { }
         public virtual void VisitLoop(Loop n) { }

@@ -11,7 +11,7 @@ using TrancheLib;
 
 namespace ILGen
 {
-    internal enum InternalTypes
+    internal enum InternalTrancheTypes
     {
         Settings,
         Deal,
@@ -33,6 +33,7 @@ namespace ILGen
         private string _currentType;
         private Action<ILGenerator> _assignmentCallback;
         private int _internalListIndex;
+        public bool _shouldLoadAddress;
 
         private const string ENTRY_POINT = "Simulation";
 
@@ -250,7 +251,7 @@ namespace ILGen
 
                 if (method.FuncInfo.Formals.Count == 1
                         && method.FuncInfo.Formals.First().Value.IsSupertype(new TypeObject())
-                        && _lastWalkedType.IsPrimitive)
+                        && (_lastWalkedType.IsPrimitive || _lastWalkedType.IsSubclassOf(typeof(ValueType))))
                 {
                     _gen.Emit(OpCodes.Box, _lastWalkedType);
                 }
@@ -271,37 +272,56 @@ namespace ILGen
             _typeManager.AddField(_currentType, n); //we're treating everything like a field (for now)
             
             n.LValue.Visit(this);
-            n.Expr.Visit(this);
+            if(n.Expr != null)
+                n.Expr.Visit(this);
+            else if (n.Statement != null)
+                n.Statement.Visit(this);
+            else
+                n.Qualifier.Visit(this);
             ApplyAssignmentCallback();
         }
 
+
         public override void VisitDereferenceField(DereferenceField n)
         {
+            _shouldLoadAddress = true;
             n.Object.Visit(this);
-            var info = _typeManager.GetBuilderInfo(_lastWalkedType.Name);
-            var field = info.FieldMap[n.Field];
-            
-            _lastWalkedType = field.FieldType;
+            _shouldLoadAddress = false;
+            if (!Enum.GetNames(typeof(InternalTrancheTypes)).Contains(_lastWalkedType.Name))
+            {
+                // this isn't a tranche type, have to handle it separately
+                if (!n.IsLeftHandSide)
+                    _gen.Emit(OpCodes.Call, _lastWalkedType.GetMethod("get_"+n.Field));
+                else
+                    _assignmentCallback = gen => gen.Emit(OpCodes.Stfld, _lastWalkedType.GetMethod("set_"+n.Field));
 
-            var shouldbeStatic = Enum.GetNames(typeof(InternalTypes)).Contains(field.Name)
-                                 || (field.DeclaringType != null && field.DeclaringType.Name == "Simulation");
-
-            //either have to load the field if getting, or store it if setting
-            // depends on why we're dereferencing, to read or write
-            if (!n.IsLeftHandSide)
-                _gen.Emit(shouldbeStatic ? OpCodes.Ldsfld : OpCodes.Ldfld, field);
+                _lastWalkedType = _lastWalkedType.GetProperty(n.Field).PropertyType;
+            }
             else
-                _assignmentCallback = gen => gen.Emit(shouldbeStatic ? OpCodes.Stsfld : OpCodes.Stfld, field);
+            {
+                var info = _typeManager.GetBuilderInfo(_lastWalkedType.Name);
+                var field = info.FieldMap[n.Field];
+
+                _lastWalkedType = field.FieldType;
+
+                var shouldbeStatic = Enum.GetNames(typeof (InternalTrancheTypes)).Contains(field.Name)
+                                     || (field.DeclaringType != null && field.DeclaringType.Name == "Simulation");
+
+                //either have to load the field if getting, or store it if setting
+                // depends on why we're dereferencing, to read or write
+                if (!n.IsLeftHandSide)
+                    _gen.Emit(shouldbeStatic ? OpCodes.Ldsfld : OpCodes.Ldfld, field);
+                else
+                    _assignmentCallback = gen => gen.Emit(shouldbeStatic ? OpCodes.Stsfld : OpCodes.Stfld, field);
+            }
         }
 
         public override void VisitIdentifier(Identifier n)
         {
             _lastWalkedIdentifier = n.Id;
             var field = _currentTypeBuilder.FieldMap[n.Id];
-            var shouldbeStatic = Enum.GetNames(typeof (InternalTypes)).Contains(field.Name)
-                                 || (field.DeclaringType != null && field.DeclaringType.Name == "Simulation");
 
-            if(!shouldbeStatic)
+            if(!field.IsStatic)
             {
                 if(IsSubClass(_currentTypeBuilder))
                     _gen.Emit(OpCodes.Ldloc, _internalListIndex);
@@ -317,6 +337,8 @@ namespace ILGen
             {
                 if (n.IsLeftHandSide)
                     _assignmentCallback = gen => gen.Emit(OpCodes.Stsfld, field);
+                else if (_shouldLoadAddress)
+                    _gen.Emit(OpCodes.Ldsflda, field);
                 else
                     _gen.Emit(OpCodes.Ldsfld, field);
             }
@@ -325,6 +347,34 @@ namespace ILGen
         }
 
         #region visit literals
+
+        public override void VisitQualifier(Qualifier n)
+        {
+            n.Expression.Visit(this);
+            MethodInfo info = null;
+            switch (n.Type.ToLower())
+            {
+                case "date":
+                    info = typeof (DateTime).GetMethod("Parse", BindingFlags.Public | BindingFlags.Static, null,
+                                                       new[] { _lastWalkedType }, null);
+                    break;
+                case "real":
+                    info = typeof(Double).GetMethod("Parse", BindingFlags.Public | BindingFlags.Static, null,
+                                                       new[] { _lastWalkedType }, null);
+                    break;
+                case "integer":
+                    info = typeof(Int32).GetMethod("Parse", BindingFlags.Public | BindingFlags.Static, null,
+                                                       new[] { _lastWalkedType }, null);
+                    break;
+                case "boolean":
+                    info = typeof(Boolean).GetMethod("Parse", BindingFlags.Public | BindingFlags.Static, null,
+                                                       new[] { _lastWalkedType }, null);
+                    break;
+                default:
+                    throw new Exception("Invalid type qualifier: (" + n.Type + ")");
+            }
+            _gen.Emit(OpCodes.Call, info);
+        }
 
         public override void VisitStringLiteral (StringLiteral n)
         {
@@ -367,8 +417,18 @@ namespace ILGen
         {
             SetupOperands(n);
 
-            //pop 2, sub, push result
-            _gen.Emit(OpCodes.Sub);
+            if (n.InternalType.ToString() == "span")
+            {
+                // date subtraction, no need to reinvent the wheel...
+                var method = typeof (DateTime).GetMethod("op_Subtraction", BindingFlags.Public | BindingFlags.Static,
+                                                         null, new[] {typeof (DateTime), typeof (DateTime)}, null);
+                _gen.Emit(OpCodes.Call, method);
+            }
+            else
+            {
+                //pop 2, sub, push result
+                _gen.Emit(OpCodes.Sub);
+            }
         }
         public override void VisitTimes(Times n)
         {
@@ -554,7 +614,7 @@ namespace ILGen
                 var methodInfo = CreateEntryPointMethod(n, name);
                 _gen = methodInfo.Builder.GetILGenerator();
 
-                foreach (var item in Enum.GetNames(typeof(InternalTypes)))
+                foreach (var item in Enum.GetNames(typeof(InternalTrancheTypes)))
                 {
                     var ident = new Identifier(n.Location, item);
                     var instantiate = new InstantiateClass(item, new ExpressionList());

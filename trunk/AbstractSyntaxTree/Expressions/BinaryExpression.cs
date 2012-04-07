@@ -6,7 +6,7 @@ namespace AbstractSyntaxTree
         public Expression Left { get; set; }
         public Expression Right { get; set; }
 
-        public BinaryExpression(Expression left, Expression right)
+        protected BinaryExpression(Expression left, Expression right)
         {
             Left = left;
             Right = right;
@@ -14,7 +14,6 @@ namespace AbstractSyntaxTree
 
         public override void Visit (Visitor v)
         {
-            v.VisitBinaryExpression(this);
         }
     }
 }

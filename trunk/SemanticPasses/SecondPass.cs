@@ -100,7 +100,13 @@ namespace tc
 
         public override void VisitAssign(Assign n)
         {
-            InternalType declFieldType = n.Expr != null ? CheckSubTree(n.Expr) : CheckSubTree(n.Statement);
+            InternalType declFieldType;
+            if(n.Expr != null)
+                declFieldType = CheckSubTree(n.Expr);
+            else if(n.Statement != null)
+                declFieldType = CheckSubTree(n.Expr);
+            else
+                declFieldType = CheckSubTree(n.Qualifier);
 
             n.InternalType = declFieldType;
 
@@ -121,6 +127,66 @@ namespace tc
             else
             {
                 ReportError(n.Location, "Identifier '{0}' has not been declared.", n.Id);
+            }
+        }
+
+        public override void VisitDereferenceField(DereferenceField n)
+        {
+            //lvalue.identifier
+            var lhs = CheckSubTree(n.Object);
+
+            if(!(lhs is TypeClass))
+            {
+                var members = lhs.CilType.GetMembers();
+                var thisProperty = members.FirstOrDefault(p => p.Name.Equals(n.Field, StringComparison.OrdinalIgnoreCase));
+
+                if (thisProperty == null)
+                    throw new Exception(string.Format("Attribute {0} not available on type {1} (object {2})", n.Field,
+                                                      lhs.CilType, n.Object));
+
+                switch(lhs.CilType.GetProperty("Days").PropertyType.Name)
+                {
+                    case "Int32":
+                        n.InternalType = _lastSeenType = new TypeInteger();
+                        break;
+                    case "DateTime":
+                        n.InternalType = _lastSeenType = new TypeDate();
+                        break;
+                    case "String":
+                        n.InternalType = _lastSeenType = new TypeString();
+                        break;
+                    case "Double":
+                        n.InternalType = _lastSeenType = new TypeReal();
+                        break;
+                    case "Boolean":
+                        n.InternalType = _lastSeenType = new TypeBoolean();
+                        break;
+                }
+            }
+        }
+
+        public override void VisitQualifier(Qualifier n)
+        {
+            n.Expression.Visit(this);
+            switch(n.Type.ToLower())
+            {
+                case "date":
+                    _lastSeenType = n.InternalType = new TypeDate();
+                    break;
+                case "real":
+                    _lastSeenType = n.InternalType = new TypeReal();
+                    break;
+                case "integer":
+                    _lastSeenType = n.InternalType = new TypeInteger();
+                    break;
+                case "string":
+                    _lastSeenType = n.InternalType = new TypeString();
+                    break;
+                case "boolean":
+                    _lastSeenType = n.InternalType = new TypeBoolean();
+                    break;
+                default:
+                    throw new Exception("Unknown type qualifier: (" + n.Type + ")");
             }
         }
 
@@ -221,6 +287,10 @@ namespace tc
             if (lhs.IsNumeric && rhs.IsNumeric)
             {
                 _lastSeenType = n.InternalType = Supertype(lhs, rhs);
+            }
+            else if(lhs.CilType == typeof(DateTime) && rhs.CilType == typeof(DateTime))
+            {
+                _lastSeenType = n.InternalType = new TypeSpan();
             }
             else
             {

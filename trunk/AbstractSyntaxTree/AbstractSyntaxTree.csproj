@@ -87,6 +87,7 @@
     <Compile Include="InternalTypes\Securities.cs" />
     <Compile Include="InternalTypes\Settings.cs" />
     <Compile Include="InternalTypes\Simulation.cs" />
+    <Compile Include="Statements\Concat.cs" />
     <Compile Include="Statements\Cons.cs" />
     <Compile Include="Statements\Invoke.cs" />
     <Compile Include="Node.cs" />

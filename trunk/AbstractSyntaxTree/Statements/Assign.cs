@@ -10,7 +10,7 @@ namespace AbstractSyntaxTree
         public string Name { get { return LValue.Id; } }
         public Expression Expr { get; private set; }
         public Descriptor Descriptor { get; set; }
-        public string Qualifier { get; set; }
+        public Qualifier Qualifier { get; set; }
         public Statement Statement { get; set; }
 
         public Assign(LValue lval, Expression exp)
@@ -24,8 +24,7 @@ namespace AbstractSyntaxTree
         {
             lval.IsLeftHandSide = true;
             LValue = lval;
-            Qualifier = qual.Type;
-            Expr = qual.Expression;
+            Qualifier = qual;
         }
 
         public Assign(LValue lval, Statement s)
@@ -37,9 +36,13 @@ namespace AbstractSyntaxTree
 
         public override String Print (int depth)
         {
-            return LValue.Print(depth) + " = " +
-                   (string.IsNullOrEmpty(Qualifier) ? string.Empty : "(" + Qualifier + ")")
-                   + (Expr == null ? Statement.Print(depth) : Expr.Print(depth));
+            var str = LValue.Print(depth) + " = ";
+            if (Qualifier != null)
+                str += Qualifier.Print(depth);
+            else
+                str += (Expr == null ? Statement.Print(depth) : Expr.Print(depth));
+
+            return str;
         }
 
         public override void Visit (Visitor v)

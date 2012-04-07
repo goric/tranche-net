@@ -7,7 +7,7 @@ using SemanticAnalysis;
 
 namespace AbstractSyntaxTree
 {
-    public class Node
+    public abstract class Node
     {
         private const int TAB_SPACES = 4;
 
@@ -31,7 +31,7 @@ namespace AbstractSyntaxTree
 
         public virtual void Visit (Visitor v)
         {
-            v.VisitNode(this);
+            
         }
 
         public string CheckNullPrint (Node n, int depth)

@@ -44,9 +44,9 @@ namespace ILGen
             var info = TypeBuilderMap[typeName];
             if (info.FieldMap.ContainsKey(n.Name)) return;
 
-            var flags = Enum.GetNames(typeof (InternalTypes)).Contains(n.Name)
-                            ? FieldAttributes.Public | FieldAttributes.Static
-                            : FieldAttributes.Public;
+            var flags = FieldAttributes.Public;
+            if (Enum.GetNames(typeof(InternalTypes)).Contains(n.Name) || typeName == "Simulation")
+                flags |= FieldAttributes.Static;
             
             var fieldBuilder = info.Builder.DefineField(n.Name, LookupCilType(n.InternalType), flags);
             info.FieldMap.Add(n.Name, fieldBuilder);

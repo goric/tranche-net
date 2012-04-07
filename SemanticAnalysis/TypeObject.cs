@@ -6,6 +6,7 @@ namespace SemanticAnalysis
     {
         public override bool IsSupertype (TypeFunction checkType) { return true; }
         public override bool IsSupertype (TypeVoid checkType) { return true; }
+        public override bool IsSupertype (TypeObject checkType) { return true; }
 
         public override Type CilType
         {

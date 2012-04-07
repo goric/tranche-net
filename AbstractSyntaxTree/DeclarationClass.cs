@@ -1,5 +1,4 @@
 ﻿using System;
-
 using SemanticAnalysis;
 
 namespace AbstractSyntaxTree

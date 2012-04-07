@@ -20,6 +20,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SamplePrograms", "SamplePrograms", "{4E548D22-A91A-4475-A8A6-9A36D60729A8}"
 	ProjectSection(SolutionItems) = preProject
 		SamplePrograms\AmortExample.tn = SamplePrograms\AmortExample.tn
+		SamplePrograms\Arithmetic.tn = SamplePrograms\Arithmetic.tn
 		SamplePrograms\BasicExample.tn = SamplePrograms\BasicExample.tn
 		SamplePrograms\CollatExample.tn = SamplePrograms\CollatExample.tn
 		SamplePrograms\DiscountExample.tn = SamplePrograms\DiscountExample.tn

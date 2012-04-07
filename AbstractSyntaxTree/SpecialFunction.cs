@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace AbstractSyntaxTree
+﻿namespace AbstractSyntaxTree
 {
     /// <summary>
     /// For built in functions that contain special characters. Other built in functions are handled as

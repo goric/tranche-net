@@ -3,6 +3,7 @@ using System.Linq;
 
 using AbstractSyntaxTree;
 using AbstractSyntaxTree.InternalTypes;
+using QUT.Gppg;
 using SemanticAnalysis;
 
 namespace tc
@@ -99,13 +100,61 @@ namespace tc
 
         public override void VisitAssign(Assign n)
         {
-            InternalType declFieldType = null;
-            declFieldType = n.Expr != null ? CheckSubTree(n.Expr) : CheckSubTree(n.Statement);
+            InternalType declFieldType = n.Expr != null ? CheckSubTree(n.Expr) : CheckSubTree(n.Statement);
 
             n.InternalType = declFieldType;
 
             var desc = _mgr.AddMember(n.LValue.Id, declFieldType, _currentClass);
             n.Descriptor = desc;
+        }
+
+        public override void VisitIdentifier(Identifier n)
+        {
+            if (_mgr.HasSymbol(n.Id))
+            {
+                var d = _mgr.GetType(n.Id);
+                n.Descriptor = d;
+                n.InternalType = d.Type;
+
+                _lastSeenType = d.Type;
+            }
+            else
+            {
+                ReportError(n.Location, "Identifier '{0}' has not been declared.", n.Id);
+            }
+        }
+
+        public override void VisitPlus(Plus n)
+        {
+            VisitBinaryArithmetic(n);
+        }
+        public override void VisitMinus(Minus n)
+        {
+            VisitBinaryArithmetic(n);
+        }
+        public override void VisitTimes(Times n)
+        {
+            VisitBinaryArithmetic(n);
+        }
+        public override void VisitDivide(Divide n)
+        {
+            VisitBinaryArithmetic(n);
+        }
+        public override void VisitExp(Exp n)
+        {
+            VisitBinaryArithmetic(n);
+        }
+        public override void VisitMod(Mod n)
+        {
+            VisitBinaryArithmetic(n);
+        }
+        public override void VisitIncrement(Increment n)
+        {
+            _lastSeenType = n.InternalType = TypeCheckIncrementDecrement(n.Expression, "++", n.Location);
+        }
+        public override void VisitDecrement(Decrement n)
+        {
+            _lastSeenType = n.InternalType = TypeCheckIncrementDecrement(n.Expression, "--", n.Location);
         }
 
         public override void VisitStringLiteral(StringLiteral n)
@@ -140,6 +189,61 @@ namespace tc
                 var func = new TypeFunction(name) { ReturnType = new TypeVoid(), IsConstructor = true, Scope = classScope };
                 _mgr.AddMethod(name, func, _currentClass);
             }
+        }
+
+        private static InternalType Supertype(InternalType t1, InternalType t2)
+        {
+            return t1.IsSupertype(t2) ? t2 : t2.IsSupertype(t1) ? t1 : null;
+        }
+
+        private static string TypeToFriendlyName(InternalType t)
+        {
+            return t.IsClass ? ((TypeClass)t).ClassName : t.ToString();
+        }
+
+        private static void ReportError(LexLocation loc, string msg, params string[] formatArgs)
+        {
+            var formattedMsg = String.Format(msg, formatArgs);
+            var location = string.Format(" line {0} column {1}", loc.StartLine, loc.StartColumn);
+            throw new Exception(String.Format(
+                "{0}{1}  at {2}",
+                formattedMsg,
+                Environment.NewLine,
+                (loc != null) ? location : "unknown")
+                );
+        }
+
+        private void VisitBinaryArithmetic(BinaryExpression n)
+        {
+            var lhs = CheckSubTree(n.Left);
+            var rhs = CheckSubTree(n.Right);
+
+            if (lhs.IsNumeric && rhs.IsNumeric)
+            {
+                _lastSeenType = n.InternalType = Supertype(lhs, rhs);
+            }
+            else
+            {
+                ReportError(n.Location, "Invalid operands for operation {0}. Got types '{1}' and '{2}'.", n.GetType().ToString(), TypeToFriendlyName(lhs), TypeToFriendlyName(rhs));
+            }
+        }
+        private InternalType TypeCheckIncrementDecrement(Expression expr, string operatorName, LexLocation loc)
+        {
+            if (!(expr is Identifier))
+            {
+                ReportError(loc, "The {0} operator requires an instance of a numeric datatype", operatorName);
+                throw new Exception(string.Format("The {0} operator requires an instance of a numeric datatype", operatorName));
+            }
+
+            var identifier = (Identifier)expr;
+            identifier.IsLeftHandSide = true;
+
+            var t = CheckSubTree(identifier);
+            if (t.IsNumeric)
+                return t;
+
+            ReportError(loc, "The {0} operator requires an instance of a numeric datatype", operatorName);
+            throw new Exception(string.Format("The {0} operator requires an instance of a numeric datatype", operatorName));
         }
     }
 }

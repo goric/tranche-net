@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection.Emit;
 
 namespace SemanticAnalysis
 {
@@ -17,32 +16,19 @@ namespace SemanticAnalysis
         public virtual bool IsSupertype (TypeVoid checkType) { return false; }
         public virtual bool IsSupertype (TypeObject checkType) { return false; }
         public virtual bool IsSupertype (TypeClass checkType) { return false; }
-        public virtual bool IsSupertype(TypeString checkType) { return false; }
+        public virtual bool IsSupertype (TypeString checkType) { return false; }
+        public virtual bool IsSupertype(TypeBoolean checkType) { return false; }
+        public virtual bool IsSupertype(TypeReal checkType) { return false; }
+        public virtual bool IsSupertype(TypeInteger checkType) { return false; }
 
         public virtual bool IsFunction { get { return false; } }
         public virtual bool IsClass { get { return false; } }
         public virtual bool IsString { get { return false; } }
+        public virtual bool IsNumeric { get { return false; } }
         
         public virtual int Size { get { return 0; } }
 
         public abstract Type CilType { get; }
-
-        public virtual InternalType BaseType { get { return this; } }
-
-        public bool IsSubtypeOf (InternalType t)
-        {
-            return t.IsSupertype(this);
-        }
-
-        public virtual OpCode LoadElementOpCode
-        {
-            get { return OpCodes.Ldelem_Ref; }
-        }
-
-        public virtual OpCode StoreElementOpCode
-        {
-            get { return OpCodes.Stelem_Ref; }
-        }
 
         public virtual string Print(int depth)
         {

@@ -27,6 +27,7 @@ namespace ILGen
         private TypeManager _typeManager;
         private TypeBuilderInfo _currentTypeBuilder;
         private Type _lastWalkedType;
+        private string _lastWalkedIdentifier;
 
         private readonly string _assemblyName;
         private string _currentType;
@@ -246,10 +247,21 @@ namespace ILGen
             {
                 n.Actuals.Visit(this);
                 var method = InternalMethodManager.Lookup(n.Method);
+
+                if (method.FuncInfo.Formals.Count == 1
+                        && method.FuncInfo.Formals.First().Value.IsSupertype(new TypeObject())
+                        && _lastWalkedType.IsPrimitive)
+                {
+                    _gen.Emit(OpCodes.Box, _lastWalkedType);
+                }
+
                 method.Emit(_gen);
+                
+                _lastWalkedType = _typeManager.LookupCilType(method.FuncInfo.ReturnType);
             }
             else
             {
+                //not allowing user-defined functions
                 throw new TrancheCompilerException(string.Format("Unknown method {0} at {1}", n.Method, n.Location));
             }
         }
@@ -271,9 +283,11 @@ namespace ILGen
             
             _lastWalkedType = field.FieldType;
 
+            var shouldbeStatic = Enum.GetNames(typeof(InternalTypes)).Contains(field.Name)
+                                 || (field.DeclaringType != null && field.DeclaringType.Name == "Simulation");
+
             //either have to load the field if getting, or store it if setting
             // depends on why we're dereferencing, to read or write
-            var shouldbeStatic = Enum.GetNames(typeof(InternalTypes)).Contains(field.Name);
             if (!n.IsLeftHandSide)
                 _gen.Emit(shouldbeStatic ? OpCodes.Ldsfld : OpCodes.Ldfld, field);
             else
@@ -282,8 +296,10 @@ namespace ILGen
 
         public override void VisitIdentifier(Identifier n)
         {
+            _lastWalkedIdentifier = n.Id;
             var field = _currentTypeBuilder.FieldMap[n.Id];
-            var shouldbeStatic = Enum.GetNames(typeof (InternalTypes)).Contains(field.Name);
+            var shouldbeStatic = Enum.GetNames(typeof (InternalTypes)).Contains(field.Name)
+                                 || (field.DeclaringType != null && field.DeclaringType.Name == "Simulation");
 
             if(!shouldbeStatic)
             {
@@ -306,12 +322,6 @@ namespace ILGen
             }
 
             _lastWalkedType = field.FieldType;
-        }
-
-        public override void VisitEqual(Equal n)
-        {
-            n.Left.Visit(this);
-            n.Right.Visit(this);
         }
 
         #region visit literals
@@ -340,6 +350,195 @@ namespace ILGen
             //true == 1 / false == 0
             _gen.Emit(n.Val ? OpCodes.Ldc_I4_1 : OpCodes.Ldc_I4_0);
             _lastWalkedType = typeof(int);
+        }
+
+        #endregion
+
+        #region visit binary operators
+
+        public override void VisitPlus(Plus n)
+        {
+            SetupOperands(n);
+
+            //pop 2 numbers, add, push result
+            _gen.Emit(OpCodes.Add);
+        }
+        public override void VisitMinus(Minus n)
+        {
+            SetupOperands(n);
+
+            //pop 2, sub, push result
+            _gen.Emit(OpCodes.Sub);
+        }
+        public override void VisitTimes(Times n)
+        {
+            SetupOperands(n);
+
+            //pop, multiply, push result
+            _gen.Emit(OpCodes.Mul);
+        }
+        public override void VisitDivide(Divide n)
+        {
+            SetupOperands(n);
+
+            //pop, divide, push result
+            _gen.Emit(OpCodes.Div);
+        }
+        public override void VisitMod(Mod n)
+        {
+            SetupOperands(n);
+
+            //divide, push rem on stack
+            _gen.Emit(OpCodes.Rem);
+        }
+
+        private void SetupOperands(BinaryExpression n)
+        {
+            //push L
+            n.Left.Visit(this);
+            if(_lastWalkedType != n.InternalType.CilType)
+            {
+                switch(n.InternalType.CilType.ToString())
+                {
+                    case"System.Double":
+                        _gen.Emit(OpCodes.Conv_R8);
+                        break;
+                    case "System.Int32":
+                        _gen.Emit(OpCodes.Conv_I4);
+                        break;
+                }
+            }
+
+            //push R
+            n.Right.Visit(this);
+            if(_lastWalkedType != n.InternalType.CilType)
+            {
+                switch (n.InternalType.CilType.ToString())
+                {
+                    case "System.Double":
+                        _gen.Emit(OpCodes.Conv_R8);
+                        break;
+                    case "System.Int32":
+                        _gen.Emit(OpCodes.Conv_I4);
+                        break;
+                }
+            }
+        }
+
+        #endregion
+
+        #region visit unary operations
+
+        public override void VisitIncrement(Increment n)
+        {
+            ApplyIncrementDecrement(n.Expression, OpCodes.Add);
+        }
+
+        public override void VisitDecrement(Decrement n)
+        {
+            ApplyIncrementDecrement(n.Expression, OpCodes.Sub);
+        }
+
+        private void ApplyIncrementDecrement(Expression exp, OpCode op)
+        {
+            exp.Visit(this);
+            //visit the identifier again, as the right hand side of an assignment so we emit the OpCodes for loading onto the stack
+            new Identifier(null, _lastWalkedIdentifier).Visit(this);
+
+            _gen.Emit(OpCodes.Ldc_I4_1);
+            _gen.Emit(op);
+            //store this back to the location
+            ApplyAssignmentCallback();
+        }
+
+        #endregion
+
+        #region visit relop
+
+        public override void VisitSmaller(Smaller n)
+        {
+            SetupOperands(n);
+
+            _gen.Emit(OpCodes.Clt);
+
+            _lastWalkedType = typeof(bool);
+        }
+
+        public override void VisitGreater(Greater n)
+        {
+            SetupOperands(n);
+
+            _gen.Emit(OpCodes.Cgt);
+
+            _lastWalkedType = typeof(bool);
+        }
+
+        public override void VisitEqual(Equal n)
+        {
+            SetupOperands(n);
+            if (_lastWalkedType == typeof(String))
+            {
+                _gen.Emit(OpCodes.Call, typeof(String).GetMethod("Equals", BindingFlags.Public | BindingFlags.Static, null,
+                    new Type[] { typeof(string), typeof(string) }, null));
+
+            }
+            else
+            {
+                _gen.Emit(OpCodes.Ceq);
+            }
+
+            _lastWalkedType = typeof(bool);
+        }
+
+        public override void VisitSmallerEqual(SmallerEqual n)
+        {
+            SetupOperands(n);
+            //check eq
+            _gen.Emit(OpCodes.Ceq);
+
+            SetupOperands(n);
+            //check lt
+            _gen.Emit(OpCodes.Clt);
+
+            //or them
+            _gen.Emit(OpCodes.Or);
+
+            _lastWalkedType = typeof(bool);
+        }
+
+        public override void VisitGreaterEqual(GreaterEqual n)
+        {
+            SetupOperands(n);
+            //check eq
+            _gen.Emit(OpCodes.Ceq);
+
+            SetupOperands(n);
+            //check gt
+            _gen.Emit(OpCodes.Cgt);
+
+            //or them
+            _gen.Emit(OpCodes.Or);
+
+            _lastWalkedType = typeof(bool);
+        }
+
+        public override void VisitNotEqual(NotEqual n)
+        {
+            SetupOperands(n);
+            if (_lastWalkedType == typeof(String))
+            {
+                _gen.Emit(OpCodes.Call, typeof(String).GetMethod("Equals", BindingFlags.Public | BindingFlags.Static, null,
+                    new Type[] { typeof(string), typeof(string) }, null));
+            }
+            else
+            {
+                _gen.Emit(OpCodes.Ceq);
+            }
+            //compare it with 0 to negate
+            _gen.Emit(OpCodes.Ldc_I4_0);
+            _gen.Emit(OpCodes.Ceq);
+
+            _lastWalkedType = typeof(bool);
         }
 
         #endregion

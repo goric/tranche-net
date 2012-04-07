@@ -11,7 +11,6 @@ namespace AbstractSyntaxTree
 
         public override void Visit (Visitor v)
         {
-            v.VisitExpr(this);
         }
     }
 }

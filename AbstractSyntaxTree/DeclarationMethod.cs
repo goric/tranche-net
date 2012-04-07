@@ -23,10 +23,5 @@ namespace AbstractSyntaxTree
             return ReturnType.Print(depth) + " " + Name + "(" + ")" + "{" + NewLine(depth + 1)
                 + (Body == null ? string.Empty : Body.Print(depth + 1)) + NewLine(depth) + "}";
         }
-
-        public override void Visit (Visitor v)
-        {
-            v.VisitDeclarationMethod(this);
-        }
     }
 }

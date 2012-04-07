@@ -16,10 +16,5 @@ namespace AbstractSyntaxTree
         {
             return "{" + NewLine(depth + 1) + Body.Print(depth + 1) + NewLine(depth) + "}";
         }
-
-        public override void Visit (Visitor v)
-        {
-            v.VisitBlock(this);
-        }
     }
 }

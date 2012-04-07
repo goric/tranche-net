@@ -1,4 +1,6 @@
 ﻿
+using SemanticAnalysis;
+
 namespace AbstractSyntaxTree
 {
     public class Qualifier : Expression

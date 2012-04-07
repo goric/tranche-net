@@ -15,7 +15,7 @@
 %token<Token> RULE PLUS MINUS TIMES DIVIDE SMALLER GREATER SMEQ GTEQ EQ NEQ ASSIGN NOT MOD 
 %token<Token> LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET PBRACKET INCREMENT DECREMENT EXP DOT COMMA CONS 
 %token<Token> ATPLUS ATMINUS ATTIMES ATDIV ATMOD ATEXP PIPE LITERAL_INT LITERAL_REAL LITERAL_STRING IDENTIFIER
-%token<Token> PLUSDAY MINUSDAY PLUSMONTH MINUSMONTH PLUSYEAR MINUSYEAR
+%token<Token> PLUSDAY MINUSDAY PLUSMONTH MINUSMONTH PLUSYEAR MINUSYEAR CONCAT
 
 /* Precedence rules */
 %right ASSIGN
@@ -29,7 +29,7 @@
 %type<Prog> program
 %type<StatementList> statementList 
 %type<Statement> statement loop instantiation
-%type<Expression> expression literal compExpression lvalue expression arithmetic
+%type<Expression> expression literal compExpression lvalue expression arithmetic concat
 %type<ExpressionList> onePlusActuals actuals boolListOpt
 %type<SpecialFunction> specialFunction
 
@@ -114,6 +114,7 @@ expression		: IDENTIFIER LPAREN actuals RPAREN		{ $$ = new Invoke($1.Value, $3);
 				| lvalue								{ $$ = $1; $$.Location = CurrentLocationSpan; }
 				| arithmetic							{ $$ = $1; $$.Location = CurrentLocationSpan; }
 				| lvalue specialFunction				{ $$ = new Invoke($1, $2); $$.Location = CurrentLocationSpan; }
+				| concat								{ $$ = $1; $$.Location = CurrentLocationSpan; }
 				;
 
 instantiation	: SMALLER IDENTIFIER COMMA IDENTIFIER GREATER	{ $$ = new TimeSeries(new Identifier(CurrentLocationSpan, $2.Value), new Identifier(CurrentLocationSpan, $4.Value)); $$.Location = CurrentLocationSpan; }
@@ -124,6 +125,12 @@ instantiation	: SMALLER IDENTIFIER COMMA IDENTIFIER GREATER	{ $$ = new TimeSerie
 				| AGGREGATE IDENTIFIER expression				{ $$ = new Aggregate(new Identifier(CurrentLocationSpan, $2.Value), $3); $$.Location = CurrentLocationSpan; }
 				| PIPE expression PIPE							{ $$ = new RuleType($2); $$.Location = CurrentLocationSpan; }
 				| loop											{ $$ = $1; $$.Location = CurrentLocationSpan; }
+				;
+
+concat			: IDENTIFIER CONCAT IDENTIFIER			{ $$ = new Concat(new Identifier(CurrentLocationSpan, $1.Value), new Identifier(CurrentLocationSpan, $3.Value)); $$.Location = CurrentLocationSpan; }
+				| IDENTIFIER CONCAT literal				{ $$ = new Concat(new Identifier(CurrentLocationSpan, $1.Value), $3); $$.Location = CurrentLocationSpan; }
+				| literal CONCAT IDENTIFIER				{ $$ = new Concat($1, new Identifier(CurrentLocationSpan, $3.Value)); $$.Location = CurrentLocationSpan; }
+				| literal CONCAT literal				{ $$ = new Concat($1, $3); $$.Location = CurrentLocationSpan; }
 				;
 
 loop			: LBRACKET IDENTIFIER ASSIGN expression UPTO expression RBRACKET LPAREN statementList RPAREN					{ $$ = new Loop($2.Value, $4, "upto", $6, $9); $$.Location = CurrentLocationSpan; }

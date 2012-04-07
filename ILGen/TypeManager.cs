@@ -45,10 +45,11 @@ namespace ILGen
             if (info.FieldMap.ContainsKey(n.Name)) return;
 
             var flags = FieldAttributes.Public;
-            if (Enum.GetNames(typeof(InternalTypes)).Contains(n.Name) || typeName == "Simulation")
+            if (Enum.GetNames(typeof(InternalTrancheTypes)).Contains(n.Name) || typeName == "Simulation")
                 flags |= FieldAttributes.Static;
-            
-            var fieldBuilder = info.Builder.DefineField(n.Name, LookupCilType(n.InternalType), flags);
+
+            var type = n.Qualifier == null ? LookupCilType(n.InternalType) : LookupCilType(n.Qualifier.InternalType);
+            var fieldBuilder = info.Builder.DefineField(n.Name, type, flags);
             info.FieldMap.Add(n.Name, fieldBuilder);
         }
         public void AddInstanceField(string typeName, string fieldName, Type type)

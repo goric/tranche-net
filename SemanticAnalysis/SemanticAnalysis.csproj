@@ -52,11 +52,13 @@
     <Compile Include="TrancheCompilerException.cs" />
     <Compile Include="TypeBoolean.cs" />
     <Compile Include="TypeClass.cs" />
+    <Compile Include="TypeDate.cs" />
     <Compile Include="TypeFunction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TypeInteger.cs" />
     <Compile Include="TypeObject.cs" />
     <Compile Include="TypeReal.cs" />
+    <Compile Include="TypeSpan.cs" />
     <Compile Include="TypeString.cs" />
     <Compile Include="TypeVoid.cs" />
   </ItemGroup>

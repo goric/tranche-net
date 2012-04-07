@@ -95,6 +95,7 @@ String		\"(\\.|[^"])*\"
 "@**"				{ yylval.Token = new Token(Tokens.ATEXP, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.ATEXP); return (int) Tokens.ATEXP; }
 "@%"				{ yylval.Token = new Token(Tokens.ATMOD, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.ATMOD); return (int) Tokens.ATMOD; }
 "|"					{ yylval.Token = new Token(Tokens.PIPE, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.PIPE); return (int) Tokens.PIPE; }
+"&"					{ yylval.Token = new Token(Tokens.CONCAT, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.CONCAT); return (int) Tokens.CONCAT; }
 
 
 {Integer}	 		{ yylval.Token = new Token(Tokens.LITERAL_INT, yytext, yyline, yycol); if(isDebug) Console.WriteLine(Tokens.LITERAL_INT); return (int) Tokens.LITERAL_INT; }

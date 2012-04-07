@@ -30,13 +30,13 @@ namespace TrancheLib
                 case AggregateMethods.Sum:
                     return _input.Values.Cast<double>().Aggregate(0d, (current, item) => current + item);
                 case AggregateMethods.Avg:
-                    return _input.Values.Cast<double>().Average(x => x);
+                    return _input.Values.Cast<double>().Average();
                 case AggregateMethods.Product:
                     return _input.Values.Cast<double>().Aggregate(1d, (current, item) => current*item);
                 case AggregateMethods.Max:
-                    return _input.Values.Cast<double>().Max(x => x);
+                    return _input.Values.Cast<double>().Max();
                 case AggregateMethods.Min:
-                    return _input.Values.Cast<double>().Min(x => x);
+                    return _input.Values.Cast<double>().Min();
                 default:
                     throw new ApplicationException("Unhandled aggregation type: " + _method);
             }

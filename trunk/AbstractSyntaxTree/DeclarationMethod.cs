@@ -1,10 +1,9 @@
 ﻿using System;
-
 using SemanticAnalysis;
 
 namespace AbstractSyntaxTree
 {
-    public class DeclarationMethod : Declaration
+    public class DeclarationMethod : Node
     {
         public InternalType ReturnType { get; set; }
         public String Name { get; set; }
@@ -15,12 +14,6 @@ namespace AbstractSyntaxTree
         public DeclarationMethod(String name, StatementList body)
         {
             ReturnType = new TypeVoid();
-            Name = name;
-            Body = body;
-        }
-        public DeclarationMethod(InternalType returnType, String name, StatementList body)
-        {
-            ReturnType = returnType;
             Name = name;
             Body = body;
         }

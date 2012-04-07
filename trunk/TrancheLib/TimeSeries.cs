@@ -2,7 +2,7 @@
 
 namespace TrancheLib
 {
-    public class TimeSeries<T> : TimeSeries2<DateTime, T>
+    public class TimeSeries<T> : TimeSeriesGeneric<DateTime, T>
     {
 
     }

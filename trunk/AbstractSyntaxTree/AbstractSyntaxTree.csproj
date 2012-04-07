@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Aggregate.cs" />
+    <Compile Include="DeclarationMethod.cs" />
     <Compile Include="Expressions\Arithmetic\Decrement.cs" />
     <Compile Include="Expressions\Arithmetic\Divide.cs" />
     <Compile Include="Expressions\Arithmetic\Exp.cs" />
@@ -57,9 +58,7 @@
     <Compile Include="InternalTypes\TimeSeries.cs" />
     <Compile Include="Qualifier.cs" />
     <Compile Include="DeclarationClass.cs" />
-    <Compile Include="DeclarationMethod.cs" />
     <Compile Include="Expressions\BinaryExpression.cs" />
-    <Compile Include="Declaration.cs" />
     <Compile Include="Expressions\DereferenceField.cs" />
     <Compile Include="Expressions\InstantiateClass.cs" />
     <Compile Include="Expressions\LValue.cs" />

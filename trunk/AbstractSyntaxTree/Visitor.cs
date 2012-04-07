@@ -8,7 +8,6 @@ namespace AbstractSyntaxTree
 
         public virtual void VisitProgram (Prog n) { }
 
-        public virtual void VisitDeclaration (Declaration n) { }
         public virtual void VisitDeclarationMethod (DeclarationMethod n) { }
         public virtual void VisitDeclarationClass(DeclarationClass n) { }
 

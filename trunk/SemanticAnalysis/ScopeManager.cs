@@ -76,5 +76,22 @@ namespace SemanticAnalysis
 
             return null;
         }
+
+        public Descriptor GetType(string name)
+        {
+            return Find(name, d => d.IsType);
+        }
+        public bool HasSymbol(string identifier)
+        {
+            return HasSymbol(identifier, CurrentScope);
+        }
+        public bool HasSymbol(string identifier, Scope s)
+        {
+            return Find(identifier, d => true, s) != null;
+        }
+        public bool HasSymbolShallow(string identifier)
+        {
+            return Find(identifier, d => true, CurrentScope, true) != null;
+        }
     }
 }

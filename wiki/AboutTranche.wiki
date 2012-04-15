@@ -1,5 +1,3 @@
-#summary An overview of the Tranche language.
-
 = Getting Started With Tranche =
 
 Tranche is a DSL for modeling structured finance products. It is not Turing complete, and may initially seem restrictive to programmers familiar with general purpose languages. 
@@ -53,7 +51,7 @@ Explicit type qualification is allowed, especially for use with the `date` type.
 }}}
 
 == Arithmetic ==
-Tranche supports the expected arithmetic operations, (+,-,*,/,% (modulo),^ (exponentiation)) between numeric types (`real` and `integer` only; `Boolean` is non-numeric). The type of the result of a cross-type arithmetic operation will be a `real`. The operator ** is an alias for exponentiation.
+Tranche supports the expected arithmetic operations, (+,-,`*`,/,% (modulo),^ (exponentiation)) between numeric types (`real` and `integer` only; `Boolean` is non-numeric). The type of the result of a cross-type arithmetic operation will be a `real`. The operator ** is an alias for exponentiation.
 When a + is used on two strings or a string and a numeric type, the result will be a string concatenation, even if the string contains a numeric value.
 {{{
     a: (4 + 8) * 3     /* 36 */
@@ -90,12 +88,31 @@ The `Rule` is a hybrid of a `Boolean` statement and an action to be performed if
 }}}
 
 == Looping ==
-There are no unbounded loops available in tranche. The only type of loop which can be written is essentially a for loop where upper and lower bounds are given.
+There are no unbounded loops available in tranche. The only type of loop which can be written is essentially a for loop where upper and lower bounds are given. Loops can loop forwards (increment) or backwards (decrement) using the `upto` and `downto` keywords. Loops can be freestanding, or can return values to be assigned to a set.
+{{{
+    /* print 0 to 9 */
+    [x:0 upto 10](
+        println(x)
+    )
+
+    /* assign a set [10 8 6 4 2] */
+    y : [x:10 downto 0 with x: x-2](
+        {
+            value: x
+        })
+
+    /* dates can be looped as well using the special increment/decrement built-in functions */
+    first: (date)"1/1/2012"
+    last: (date)"1/31/2012"
+    [y:first upto last with y +Day(1)](
+        println(y)
+    )
+}}}
 
 == Set Manipulation ==
 
 
-== Provided Functions ==
+== Simulation Functions ==
 
 
 == A Full Basic Example ==

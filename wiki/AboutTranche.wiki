@@ -1,0 +1,214 @@
+#summary An overview of the Tranche language.
+
+= Getting Started With Tranche =
+
+Tranche is a DSL for modeling structured finance products. It is not Turing complete, and may initially seem restrictive to programmers familiar with general purpose languages. 
+
+
+== Program Sections ==
+A tranche program is split into various sections, which act as logical separations of concerns. Most sections provide data storage only, and do not allow for arbitrary code execution. Sections are denoted by a period followed by the section name, with the section's contents wrapped in a set of curly braces. Every valid Tranche program must contain the following sections:
+  * `.Collateral`
+  * `.Securities`
+  * `.CreditPaymentRules`
+  * `.Simulation`
+
+Optional top-level sections include:
+  * `.Settings`
+  * `.Deal`
+
+In addition to top-level sections, there are available sub-sections as well. These are:
+  * `.CollateralItem`, available inside `.Collateral`
+  * `.Bond`, available inside `.Securities`
+  * `.Interest` and `.Principal`, available inside `.CreditPaymentRules`
+
+The only sections of these which allow for statements other than simple assignments are `.CreditPaymentRules` and its sub-sections, which allow for logical statements involving `Rule`s and `.Simulation`, which allows for any arbitrary code.
+
+== Hello World ==
+The smallest valid Tranche program which prints `"Hello, World!"` is:
+{{{
+    .Collateral {}
+    .Securities {}
+    .CreditPaymentRules{}
+    .Simulation
+    {
+        println("Hello, World!");
+    }
+}}}
+
+== Primitive Types ==
+Tranche is a statically-typed language, but the majority of the type system normally goes unseen in the code, relying on compiler inference instead. The primitive types in Tranche are `real`, `integer`, `string`, `Boolean`, and `date`, which should all be self-explanatory. The compiler will determine what values should be what type, unless a type qualifier is used.
+
+== Assignments ==
+Any primitive or complex type can be assigned to a variable with the assignment operator `:`. Note that there is no type specification needed.
+{{{
+    pi: 3.14159    /* real */
+    value: 12      /* integer */
+    isOpen: false  /* Boolean */
+    description: "This is Tranche..." /* string */
+}}}
+
+Explicit type qualification is allowed, especially for use with the `date` type. There is no syntax for declaring a date literal other than placing a type qualifier on a string:
+{{{
+    today: (date)"4/14/2012"
+}}}
+
+== Arithmetic ==
+Tranche supports the expected arithmetic operations, (+,-,*,/,% (modulo),^ (exponentiation)) between numeric types (`real` and `integer` only; `Boolean` is non-numeric). The type of the result of a cross-type arithmetic operation will be a `real`. The operator ** is an alias for exponentiation.
+When a + is used on two strings or a string and a numeric type, the result will be a string concatenation, even if the string contains a numeric value.
+{{{
+    a: (4 + 8) * 3     /* 36 */
+    b: a / 6           /* 6 */
+    c: a % 11          /* 3 */
+    d: c ** 3          /* 27 */
+}}}
+
+== Comparisons ==
+Typical logical comparisons are implemented and return a `Boolean` type. The operators available are <, <=, =, !=, >, and >=. The equals (=) operator should not be confused with the assignment (:) operator.
+
+== Complex Types ==
+There are complex types available as well. The `Set` is similar to lists in other languages, an offers concatenation and removal operations, as well as set-wise (vector) arithmetic operations:
+{{{
+    reals: [1.2 3.45 6.789] /* [1.2 3.45 6.789] */
+    appended: reals :: 5.3  /* yields [1.2 3.45 6.789 5.2] */
+    removed: appended - 2   /* remove at index 2 (0-based), yields [1.2 3.45 5.3] */
+    double: removed @* 2    /* vector operation, yields [2.4 6.9 10.6] */
+}}}
+
+The `TimeSeries` is a more specific type of `Set`, namely a grouping of two `Sets`. There are two representations, one being a set of `dates` and a set of numeric types and the other being two sets of numeric types. When used in the latter context, it is assumed that the sets are two time series of the same periodicity, and some context is needed to describe what that periodicity is.
+{{{
+    dates: [(date)"1/1/2008" (date)"1/1/2009" (date)"1/1/2010" (date)"1/1/2011" (date)"1/1/2012"]
+    payments: [300 300 300 300 300]
+    interest: [1.5 1.5 1.5 1.5 1.5]
+    seriesOne: <dates, payments>
+    seriesTwo: <payments, interest>
+}}}
+
+The `Rule` is a hybrid of a `Boolean` statement and an action to be performed if that statement evaluates to true given some input. This type was introduced for use with the `filter` operation for manipulating `Set`s, described in more detail below. This type has no valid meaning when not acting on some input parameter.
+{{{
+    rule: |x > 15, x: x+5|
+    rule2: |y = "test", y: "passed"|
+}}}
+
+== Looping ==
+There are no unbounded loops available in tranche. The only type of loop which can be written is essentially a for loop where upper and lower bounds are given.
+
+== Set Manipulation ==
+
+
+== Provided Functions ==
+
+
+== A Full Basic Example ==
+
+{{{
+.Deal
+{
+    Name: "BACM 2005-3"
+    CutoffDate: (date)"7/1/2005"
+}
+
+.Collateral
+{
+    .CollateralItem
+    {
+        ID: 0
+        PropertyName: "Woolworth Building"
+        OriginalBalance: 200,000,000
+        CurrentBalance: 200,000,000 
+        InterestRate: 0.05191
+        Maturity: (date)"6/1/2015"
+        PropertyType: "Office"
+        City: "New York"
+        State: "NY" 
+    }
+    .CollateralItem
+    {
+        ID: 1
+        PropertyName: "Ridgedale Center"
+        OriginalBalance: 168,632,029 
+        CurrentBalance: 168,632,029 
+        InterestRate: 0.04861
+        Maturity: (date)"9/30/2016"
+        PropertyType: "Retail"
+        City: "Minnetonka"
+        State: "MN"
+    }
+    .CollateralItem
+    {
+        ID: 2
+        PropertyName: "Marley Station"
+        OriginalBalance: 114,400,000 
+        CurrentBalance: 100,000,000 
+        InterestRate: 0.04891
+        Maturity: (date)"7/1/12"
+        PropertyType: "Retail"
+        City: "Glen Burnie"
+        State: "MD"
+    }
+    .CollateralItem
+    {
+        ID: 3
+        PropertyName: "Fiesta Mall"
+        OriginalBalance: 84,000,000
+        CurrentBalance: 78,000,000
+        InterestRate: 0.04875
+        Maturity: (date)"1/1/2015"
+        PropertyType: "Retail"
+        City: "Mesa"
+        State: "AZ"
+    }
+}
+
+.Securities
+{
+    .Bond
+    {
+        ID: 0
+        CUSIP: "05947UR42"
+        Class: "A-2"
+        OriginalBalance: 505,650,000 
+        CurrentBalance: 125,483,169 
+    }
+    .Bond
+    {
+        ID: 1
+        CUSIP: "05947UR59"
+        Class: "A-3"
+        OriginalBalance: 279,216,000 
+        CurrentBalance: 279,216,000 
+    }
+    .Bond
+    {
+        ID: 2
+        CUSIP: "05947US41"
+        Class: "X"
+        OriginalBalance: 24,312,000
+        CurrentBalance: 24,312,000
+    }
+}
+
+.CreditPaymentRules
+{
+    .Interest
+    {
+        -> Class="A-2" or Class="A-3"
+        -> Class="X"
+    }
+    .Principal
+    {
+        -> CUSIP="05947UR42"
+        -> Class="A-3"
+    }
+}
+
+.Simulation
+{
+    collateralCashflows: SimulateCollateral()
+    bondCashflows: SimulateBonds(collateralCashflows)
+
+    bondA2: filter bondCashflows x x.Class="A-2"
+    price: aggregate bondA2 discount(12)
+    println("Bond A-2 has price " + price)
+}
+
+}}}

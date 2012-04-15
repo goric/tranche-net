@@ -2,6 +2,17 @@
 
 Tranche is a DSL for modeling structured finance products. It is not Turing complete, and may initially seem restrictive to programmers familiar with general purpose languages. 
 
+== Hello World ==
+In keping with programming language tradition, here is the smallest valid Tranche program which prints `"Hello, World!"`:
+{{{
+    .Collateral {}
+    .Securities {}
+    .CreditPaymentRules{}
+    .Simulation
+    {
+        print("Hello, World!");
+    }
+}}}
 
 == Program Sections ==
 A tranche program is split into various sections, which act as logical separations of concerns. Most sections provide data storage only, and do not allow for arbitrary code execution. Sections are denoted by a period followed by the section name, with the section's contents wrapped in a set of curly braces. Every valid Tranche program must contain the following sections:
@@ -21,18 +32,6 @@ In addition to top-level sections, there are available sub-sections as well. The
 
 The only sections of these which allow for statements other than simple assignments are `.CreditPaymentRules` and its sub-sections, which allow for logical statements involving `Rule`s and `.Simulation`, which allows for any arbitrary code.
 
-== Hello World ==
-The smallest valid Tranche program which prints `"Hello, World!"` is:
-{{{
-    .Collateral {}
-    .Securities {}
-    .CreditPaymentRules{}
-    .Simulation
-    {
-        println("Hello, World!");
-    }
-}}}
-
 == Primitive Types ==
 Tranche is a statically-typed language, but the majority of the type system normally goes unseen in the code, relying on compiler inference instead. The primitive types in Tranche are `real`, `integer`, `string`, `Boolean`, and `date`, which should all be self-explanatory. The compiler will determine what values should be what type, unless a type qualifier is used.
 
@@ -41,7 +40,7 @@ Any primitive or complex type can be assigned to a variable with the assignment 
 {{{
     pi: 3.14159    /* real */
     value: 12      /* integer */
-    isOpen: false  /* Boolean */
+    isOpen: true   /* Boolean */
     description: "This is Tranche..." /* string */
 }}}
 
@@ -51,8 +50,8 @@ Explicit type qualification is allowed, especially for use with the `date` type.
 }}}
 
 == Arithmetic ==
-Tranche supports the expected arithmetic operations, (+,-,`*`,/,% (modulo),^ (exponentiation)) between numeric types (`real` and `integer` only; `Boolean` is non-numeric). The type of the result of a cross-type arithmetic operation will be a `real`. The operator ** is an alias for exponentiation.
-When a + is used on two strings or a string and a numeric type, the result will be a string concatenation, even if the string contains a numeric value.
+Tranche supports the expected arithmetic operations +, -, `*` ,/ ,% (modulo), and ^ (exponentiation) between numeric types (`real` and `integer` only; `Boolean` is non-numeric). The type of the result of a cross-type arithmetic operation will be the higher of the two types (_e.g._ `real` and `integer` yields `real`). The operator `*``*` is an alias for exponentiation.
+When a `+` is used on two strings or a string and a numeric type, the result will be a string concatenation, not an arithmetic operation, even if the string contains a numeric value.
 {{{
     a: (4 + 8) * 3     /* 36 */
     b: a / 6           /* 6 */
@@ -61,10 +60,10 @@ When a + is used on two strings or a string and a numeric type, the result will 
 }}}
 
 == Comparisons ==
-Typical logical comparisons are implemented and return a `Boolean` type. The operators available are <, <=, =, !=, >, and >=. The equals (=) operator should not be confused with the assignment (:) operator.
+Typical logical comparisons are implemented and return a `Boolean` type. The operators available are <, <=, =, !=, >, and >=. The equality operator (=) should not be confused with the assignment operator (:).
 
 == Complex Types ==
-There are complex types available as well. The `Set` is similar to lists in other languages, an offers concatenation and removal operations, as well as set-wise (vector) arithmetic operations:
+There are complex types available as well. The `Set` is similar to ordered lists or arrays in other languages. It offers concatenation and removal operations, as well as set-wise (vector) arithmetic operations:
 {{{
     reals: [1.2 3.45 6.789] /* [1.2 3.45 6.789] */
     appended: reals :: 5.3  /* yields [1.2 3.45 6.789 5.2] */
@@ -72,7 +71,7 @@ There are complex types available as well. The `Set` is similar to lists in othe
     double: removed @* 2    /* vector operation, yields [2.4 6.9 10.6] */
 }}}
 
-The `TimeSeries` is a more specific type of `Set`, namely a grouping of two `Sets`. There are two representations, one being a set of `dates` and a set of numeric types and the other being two sets of numeric types. When used in the latter context, it is assumed that the sets are two time series of the same periodicity, and some context is needed to describe what that periodicity is.
+The `TimeSeries` type is based on `Set`, namely a grouping of two `Sets`. There are two representations, one being combination of a set of `dates` and a set of numeric types and the other being two sets of numeric types. The former is the traditional intuitive definition of a time series. When used in the latter context, it is assumed that the sets are two related time series of the same periodicity, but the actual start and end times are not important.
 {{{
     dates: [(date)"1/1/2008" (date)"1/1/2009" (date)"1/1/2010" (date)"1/1/2011" (date)"1/1/2012"]
     payments: [300 300 300 300 300]
@@ -87,8 +86,10 @@ The `Rule` is a hybrid of a `Boolean` statement and an action to be performed if
     rule2: |y = "test", y: "passed"|
 }}}
 
+There are no user-defined types that can be explicitly created. All created types are specializations of built-in types. The way to create a new type would be by creating a set from a loop, and returning custom properties for that set. In the second looping example below, `y` is a custom type, specifically a set of types with one attribute, an integer named `value`. Created types should be seen as similar to a `tuple` or `struct` in other languages. No methods can be defined for custom types, although all methods that can be used with a `Set` are available.
+
 == Looping ==
-There are no unbounded loops available in tranche. The only type of loop which can be written is essentially a for loop where upper and lower bounds are given. Loops can loop forwards (increment) or backwards (decrement) using the `upto` and `downto` keywords. Loops can be freestanding, or can return values to be assigned to a set.
+There are no unbounded loops available in tranche. The only type of loop which can be written is a for loop where both upper and lower bounds are given. Loops can traverse forwards (increment) or backwards (decrement) using the `upto` and `downto` keywords. Loops can be freestanding, or can return values to be assigned to a set. If the `with` statement is omitted, the default incrementer or decrementer for the type of the looping variable will be used.
 {{{
     /* print 0 to 9 */
     [x:0 upto 10](
@@ -110,9 +111,11 @@ There are no unbounded loops available in tranche. The only type of loop which c
 }}}
 
 == Set Manipulation ==
-
+There are two built in operations available for `Set`s; filtering and aggregation. 
 
 == Simulation Functions ==
+
+Several functions are provided for ease when performing very simple simulations of deals. 
 
 
 == A Full Basic Example ==

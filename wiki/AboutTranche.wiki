@@ -111,12 +111,39 @@ There are no unbounded loops available in tranche. The only type of loop which c
 }}}
 
 == Set Manipulation ==
-There are two built in operations available for `Set`s; filtering and aggregation. 
+There are two built in operations available for `Set`s; filtering and aggregation. The `aggregate` function takes as input the `Set` on which to act and an aggregation function to apply. The built in aggregation functions are `min`, `max`, `product`, `average`, and `sum`. Each of these takes as a parameter the name of the attribute on the type of the `Set` which should be aggregated unless it is of a primitive type, in which case the parameter should be omitted. Alternatively, another function may be supplied in place of these aggregation functions, provided it takes a set as its first parameter and returns a single value.
+{{{
+    odds: [1 3 5 7 9 11]
+    minimum: aggregate odds min   /* 1 */
+    maximum: aggregate odds max   /* 11 */
+    summation: aggregate odds sum /* 36 */
+    prod: aggregate odds product  /* 10395 */
+    avg: aggregate odds average   /* 6 */
+}}}
+
+The `filter` function returns a possibly empty subset of the input `Set` based on some criteria. It can be used in two different contexts. When the members of the set being filtered can be evaluated to a Boolean type (as is the case with the Rule type), the keywords first and last are available. These must be used in conjunction with another input operator, which acts as the parameter on which the rules will evaluate. These predefined operators will return the first or last element of the set which evaluates to true, respectively. When the members of the set are anything else, the second parameter to filter is a function which takes as input an element of the set and returns a Boolean. In this case, the function will return a set containing all of the elements in the original set for which the input function returns true.
+{{{
+    rules: [|y>25,print(“y>25”)| |y<9,print(“y<9”)| |y>=13,print(“y>=13”)| |y!=12,print(“y!=12”)|]
+    x: 17
+    match: filter rules x first  /* returns third item in the set */
+    match()                      /* prints y>=13 */
+
+    numbers: [1 2 3 4 5 6 7 8 9]
+    odds: filter numbers n n%2 != 0  /* [1 3 5 7 9] */
+    evens: filter numbers n n%2 = 0  /* [2 4 6 8] */
+}}}
 
 == Simulation Functions ==
 
 Several functions are provided for ease when performing very simple simulations of deals. 
+The first is `SimulateCollateral()`. In order to use this function,
+each CollateralItem must have defined a date attribute named MaturityDate, a real attribute named Coupon, and an integer attribute named PaymentFrequency. If these are not defined, the compiler will throw an error. This also assumes all of the collateral items are fixed rate agreements, so if any of them rely on floating interest rates, they will need to be considered separately. When this function is called, it will determine an amortization schedule for each
+element present in the Collateral section. It will aggregate all of them together into a single schedule representing the entire cash flow into the deal. It is possible to provide a parameter to this function in the form of a Rule statement or a logical concatenation of Rules. In this case, any CollateralItem matching the criteria of the rules will have an amortization schedule computed, and the others will be ignored.
 
+The second is `SimulateBonds()`. This function must be given a parameter of an amortization schedule representing the cash flows into
+the deal. It will then apply the rules given in the Interest and Principal sections within the CreditPaymentRules section in order to determine a cash flow schedule for each bond in the Securities section (assuming there is information in the CreditPaymentRules section on how to allocate payments to it).
+
+There are also two more generic financial calculation functions. The `payment` function for determining the value of a periodic payment for a loan, and the `discount` for determining the present value of a stream of cash flows. `Payment` takes as parameters the current balance of the loan, its periodic interest rate, and the number of periods which are left until the loan is paid off, and returns the total amount of the payment which is to be made at each period. `Discount` takes a `TimeSeries` of payments and a discount rate and returns a present value.
 
 == A Full Basic Example ==
 
